@@ -4,21 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#071021" />
-  <title>S.L.traker — Habit & Exercise Tracker</title>
-
+  <title>S.L.traker — Solo Leveling Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
-
   <style>
     :root {
       --bg: #071021;
-      --bg2: #09182d;
+      --bg-2: #09182d;
       --panel: rgba(9, 17, 29, 0.78);
-      --panel-strong: rgba(12, 21, 35, 0.96);
       --muted: #8ea4b8;
       --neon: #00f0ff;
-      --neon-2: #61d7ff;
-      --cyan: #80f4ff;
+      --neon-2: #6ce7ff;
       --gold: #f8c857;
       --danger: #ff6b6b;
       --green: #6ee7a5;
@@ -29,7 +25,7 @@
     html, body {
       min-height: 100%;
       background:
-        radial-gradient(circle at top, rgba(0,240,255,0.06), transparent 35%),
+        radial-gradient(circle at top, rgba(0,240,255,0.08), transparent 35%),
         linear-gradient(180deg, #020817 0%, #071021 60%);
       color: #def9ff;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -37,30 +33,48 @@
 
     body { padding: 24px; }
 
-    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(0,240,255,0.06); backdrop-filter: blur(5px); }
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(0,240,255,0.06);
+      backdrop-filter: blur(5px);
+    }
+
     .panel-title { letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.72rem; color: var(--muted); }
-    .neon-btn { background: linear-gradient(90deg, rgba(0,240,255,0.12), rgba(0,240,255,0.05)); border: 1px solid rgba(0,240,255,0.25); color: var(--neon); box-shadow: inset 0 0 8px rgba(0,240,255,0.08), 0 0 10px rgba(0,240,255,0.12); text-shadow: 0 0 10px rgba(0,240,255,0.25); transition: transform 0.15s ease, box-shadow 0.2s ease; }
+    .neon-btn {
+      background: linear-gradient(90deg, rgba(0,240,255,0.12), rgba(0,240,255,0.05));
+      border: 1px solid rgba(0,240,255,0.25);
+      color: var(--neon);
+      box-shadow: inset 0 0 8px rgba(0,240,255,0.08), 0 0 10px rgba(0,240,255,0.12);
+      text-shadow: 0 0 10px rgba(0,240,255,0.25);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
     .neon-btn:hover { transform: translateY(-1px); box-shadow: inset 0 0 8px rgba(0,240,255,0.12), 0 0 16px rgba(0,240,255,0.2); }
     .neon-outline { border: 1px solid rgba(0,240,255,0.22); color: var(--neon); background: rgba(0,240,255,0.02); }
+
     .gold-text { color: var(--gold); }
     .danger-text { color: var(--danger); }
     .green-text { color: var(--green); }
+    .purple-text { color: var(--purple); }
+
     .progress { height: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); overflow: hidden; border-radius: 999px; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--neon), #62f3ff 70%, #d3ffff); box-shadow: 0 0 12px rgba(0,240,255,0.4); border-radius: inherit; transition: width 0.25s ease; }
     .stat-pill { border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); color: #dfeeff; }
     .scroll-panel { max-height: 240px; overflow: auto; }
     .item-card { border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); border-radius: 0.75rem; padding: 0.8rem; }
-    .xp-ring { width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle, rgba(0,240,255,0.12) 0%, rgba(0,0,0,0) 60%); border: 1px solid rgba(0,240,255,0.2); box-shadow: inset 0 0 18px rgba(0,240,255,0.12); }
+    .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; font-size: 0.7rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.08); color: #d7ecff; background: rgba(255,255,255,0.04); }
     .toast { background: rgba(5, 10, 18, 0.92); border: 1px solid rgba(0,240,255,0.08); color: #def9ff; min-width: 220px; max-width: 320px; }
     .modal-backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-    .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; font-size: 0.7rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.08); color: #d7ecff; background: rgba(255,255,255,0.04); }
     .pulse { animation: pulse 1.8s ease-in-out infinite; }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 rgba(0,240,255,0.12); } 50% { box-shadow: 0 0 20px rgba(0,240,255,0.16); } }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 rgba(0,240,255,0.12);} 50%{box-shadow:0 0 24px rgba(0,240,255,0.18);} }
+    .xp-ring { width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle, rgba(0,240,255,0.12) 0%, rgba(0,0,0,0) 60%); border: 1px solid rgba(0,240,255,0.2); box-shadow: inset 0 0 18px rgba(0,240,255,0.12); }
+    .masked { opacity: .6; filter: grayscale(0.2); }
+    .achievement-done { border-color: rgba(110,231,165,0.4); background: rgba(110,231,165,0.06); }
+    .class-option.active { border-color: rgba(0,240,255,0.4); box-shadow: 0 0 15px rgba(0,240,255,0.14); }
   </style>
 </head>
 <body>
   <div class="max-w-7xl mx-auto grid md:grid-cols-12 gap-6">
-    <!-- Perfil / Estado -->
     <aside class="md:col-span-3 glass rounded-2xl p-5">
       <div class="flex items-center gap-4">
         <div class="xp-ring">
@@ -70,7 +84,7 @@
           </div>
         </div>
         <div class="min-w-0">
-          <div class="panel-title">Usuario</div>
+          <div class="panel-title">Jugador</div>
           <div class="flex items-center gap-2 flex-wrap">
             <h2 id="player-name" class="text-2xl font-bold truncate">Sung Jinwoo</h2>
             <span id="player-title" class="badge">Cazador Rango E</span>
@@ -80,38 +94,19 @@
 
       <div class="mt-5 space-y-3">
         <div class="stat-pill rounded-xl p-3">
-          <div class="flex justify-between text-xs text-slate-300">
-            <span>XP</span>
-            <span id="xp-text">0 / 100</span>
-          </div>
-          <div class="progress mt-2">
-            <div id="xp-bar" class="progress-bar" style="width: 0%"></div>
-          </div>
+          <div class="flex justify-between text-xs text-slate-300"><span>XP</span><span id="xp-text">0 / 100</span></div>
+          <div class="progress mt-2"><div id="xp-bar" class="progress-bar" style="width:0%"></div></div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 text-sm">
-          <div class="stat-pill rounded-xl p-3">
-            <div class="text-slate-400">Motivación (Oro)</div>
-            <div id="player-gold" class="text-xl font-semibold text-yellow-300">120</div>
-          </div>
-          <div class="stat-pill rounded-xl p-3">
-            <div class="text-slate-400">Faltas</div>
-            <div id="missed-count" class="text-xl font-semibold text-red-300">0</div>
-          </div>
+          <div class="stat-pill rounded-xl p-3"><div class="text-slate-400">Oro</div><div id="player-gold" class="text-xl font-semibold text-yellow-300">120</div></div>
+          <div class="stat-pill rounded-xl p-3"><div class="text-slate-400">Faltas</div><div id="missed-count" class="text-xl font-semibold text-red-300">0</div></div>
         </div>
       </div>
 
       <div class="mt-5 space-y-3">
-        <button id="edit-player-btn" class="neon-btn w-full py-2.5 rounded-xl flex items-center justify-center gap-2">
-          <span data-lucide="edit-3"></span>
-          Editar Perfil
-        </button>
-
-        <button id="notif-btn" class="neon-outline w-full py-2.5 rounded-xl flex items-center justify-center gap-2">
-          <span data-lucide="bell"></span>
-          [SISTEMA: ACTIVAR NOTIFICACIONES]
-        </button>
-
+        <button id="edit-player-btn" class="neon-btn w-full py-2.5 rounded-xl flex items-center justify-center gap-2"><span data-lucide="edit-3"></span> Editar Perfil</button>
+        <button id="notif-btn" class="neon-outline w-full py-2.5 rounded-xl flex items-center justify-center gap-2"><span data-lucide="bell"></span> [SISTEMA: ACTIVAR NOTIFICACIONES]</button>
         <div class="text-xs text-slate-400 text-center">Estado: <span id="notif-status">Default</span></div>
       </div>
 
@@ -120,105 +115,93 @@
         <div id="attributes-panel" class="space-y-2 text-sm"></div>
       </div>
 
-      <div class="mt-6">
-        <div class="flex gap-2">
-          <button id="export-btn" class="neon-outline flex-1 py-2 rounded-xl text-sm">Exportar</button>
-          <button id="import-btn" class="neon-btn flex-1 py-2 rounded-xl text-sm">Importar</button>
-        </div>
+      <div class="mt-6 stat-pill rounded-xl p-3">
+        <div class="panel-title mb-2">Clase</div>
+        <div id="class-panel" class="space-y-2"></div>
       </div>
     </aside>
 
-    <!-- Centro -->
     <main class="md:col-span-6 space-y-6">
-      <!-- Habits -->
       <section class="glass rounded-2xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold">Hábitos & Ejercicio</h3>
+          <h3 class="text-xl font-bold">Hábitos & Misiones</h3>
           <div class="flex items-center gap-2">
             <button id="add-habit-btn" class="px-3 py-1.5 rounded-lg neon-btn text-sm">Nuevo hábito</button>
-            <button id="refresh-habits" class="px-3 py-1.5 rounded-lg neon-outline text-sm">Generar evento</button>
+            <button id="generate-raid" class="px-3 py-1.5 rounded-lg neon-outline text-sm">Iniciar raid</button>
           </div>
         </div>
-
         <div id="habits-container" class="space-y-3"></div>
       </section>
 
-      <!-- Estadísticas -->
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-bold">Estadísticas</h3>
-          <span class="badge">Resumen</span>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Misiones Semanales</h3>
+          <span class="badge">Quest Log</span>
         </div>
+        <div id="quests-container" class="space-y-3"></div>
+      </section>
 
-        <div class="grid md:grid-cols-3 gap-4">
-          <div class="stat-pill rounded-xl p-3">
-            <div class="panel-title mb-2">Streak Actual</div>
-            <div id="streak-current" class="text-xl font-semibold text-cyan-200">0</div>
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Raid del Sistema</h3>
+          <span id="raid-state" class="badge">Dormant</span>
+        </div>
+        <div id="raid-box" class="item-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <div id="raid-name" class="font-semibold">No hay raid activo</div>
+              <div id="raid-desc" class="text-sm text-slate-400">Completa hábitos para desencadenar un combate.</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-slate-400">HP</div>
+              <div id="raid-hp" class="text-lg font-bold text-red-300">0</div>
+            </div>
           </div>
-          <div class="stat-pill rounded-xl p-3">
-            <div class="panel-title mb-2">Mejor Streak</div>
-            <div id="streak-best" class="text-xl font-semibold text-green-300">0</div>
-          </div>
-          <div class="stat-pill rounded-xl p-3">
-            <div class="panel-title mb-2">Ratio de cumplimiento</div>
-            <div id="completion-rate" class="text-xl font-semibold text-gold">0%</div>
+          <div class="mt-3 progress"><div id="raid-bar" class="progress-bar" style="width:0%"></div></div>
+          <div class="mt-3 flex gap-2">
+            <button id="raid-attack" class="neon-btn px-3 py-2 rounded-lg text-sm">Atacar</button>
+            <button id="raid-skip" class="neon-outline px-3 py-2 rounded-lg text-sm">Registrar fallo</button>
           </div>
         </div>
       </section>
 
-      <!-- Log -->
       <section class="glass rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-xl font-bold">Registro de actividad</h3>
-          <span id="last-daily" class="text-xs text-slate-400">Última acción: nunca</span>
-        </div>
+        <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">Logros</h3><span class="badge" id="achievement-counter">0/0</span></div>
+        <div id="achievements-container" class="space-y-2"></div>
+      </section>
+
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3"><h3 class="text-xl font-bold">Registro de actividad</h3><span id="last-daily" class="text-xs text-slate-400">Última acción: nunca</span></div>
         <div id="activity-log" class="scroll-panel space-y-2"></div>
       </section>
     </main>
 
-    <!-- Lado derecho -->
     <aside class="md:col-span-3 space-y-6">
-      <!-- Recompensas / Tienda -->
       <section class="glass rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold">Recompensas</h3>
-          <span class="badge">Gana por hábitos</span>
-        </div>
-        <div id="shop-container" class="space-y-3"></div>
+        <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">Mascota</h3><span class="badge">Companero</span></div>
+        <div id="pet-box" class="item-card"></div>
       </section>
 
-      <!-- Inventario -->
       <section class="glass rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold">Inventario</h3>
-          <span class="badge" id="inventory-count">0</span>
-        </div>
-        <div id="inventory-container" class="space-y-3"></div>
+        <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">Botín</h3><span class="badge">Loot Box</span></div>
+        <div id="lootbox-box" class="item-card"></div>
+      </section>
+
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">Contratos</h3><span class="badge">Risk</span></div>
+        <div id="contracts-container" class="space-y-3"></div>
       </section>
     </aside>
   </div>
 
-  <!-- Modales -->
   <div id="edit-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="modal-backdrop absolute inset-0"></div>
     <div class="relative z-10 w-full max-w-md mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
-      <div class="flex items-center justify-between mb-4">
-        <h4 class="text-xl font-bold">Editar Perfil</h4>
-        <button id="close-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button>
-      </div>
+      <div class="flex items-center justify-between mb-4"><h4 class="text-xl font-bold">Editar Perfil</h4><button id="close-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button></div>
       <div class="space-y-4">
-        <div>
-          <label class="text-sm text-slate-300 block mb-1">Nombre</label>
-          <input id="edit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
-        </div>
-        <div>
-          <label class="text-sm text-slate-300 block mb-1">Título / Nota</label>
-          <input id="edit-title" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button id="cancel-edit" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
-          <button id="save-edit" class="neon-btn px-4 py-2 rounded-xl">Guardar</button>
-        </div>
+        <div><label class="text-sm text-slate-300 block mb-1">Nombre</label><input id="edit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" /></div>
+        <div><label class="text-sm text-slate-300 block mb-1">Título / Nota</label><input id="edit-title" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" /></div>
+        <div class="flex justify-end gap-2 pt-2"><button id="cancel-edit" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button><button id="save-edit" class="neon-btn px-4 py-2 rounded-xl">Guardar</button></div>
       </div>
     </div>
   </div>
@@ -226,58 +209,15 @@
   <div id="habit-modal" class="fixed inset-0 hidden items-center justify-center z-50">
     <div class="modal-backdrop absolute inset-0"></div>
     <div class="relative z-10 w-full max-w-lg mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
-      <div class="flex items-center justify-between mb-4">
-        <h4 id="habit-modal-title" class="text-xl font-bold">Nuevo hábito</h4>
-        <button id="close-habit-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button>
-      </div>
-
+      <div class="flex items-center justify-between mb-4"><h4 id="habit-modal-title" class="text-xl font-bold">Nuevo hábito</h4><button id="close-habit-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button></div>
       <div class="space-y-3">
-        <div>
-          <label class="text-sm text-slate-300 block mb-1">Nombre del hábito</label>
-          <input id="habit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" />
-        </div>
+        <div><label class="text-sm text-slate-300 block mb-1">Nombre del hábito</label><input id="habit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" /></div>
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-sm text-slate-300 block mb-1">Frecuencia</label>
-            <select id="habit-frequency" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white">
-              <option value="daily">Diario</option>
-              <option value="weekly">Semanal</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-sm text-slate-300 block mb-1">Recordatorio (HH:MM)</label>
-            <input id="habit-reminder" type="time" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" />
-          </div>
+          <div><label class="text-sm text-slate-300 block mb-1">Frecuencia</label><select id="habit-frequency" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white"><option value="daily">Diario</option><option value="weekly">Semanal</option></select></div>
+          <div><label class="text-sm text-slate-300 block mb-1">Recordatorio</label><input id="habit-reminder" type="time" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" /></div>
         </div>
-
-        <div>
-          <label class="text-sm text-slate-300 block mb-1">Recompensa (XP)</label>
-          <input id="habit-xp" type="number" min="1" value="20" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" />
-        </div>
-
-        <div class="flex justify-end gap-2 pt-2">
-          <button id="habit-cancel" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
-          <button id="habit-save" class="neon-btn px-4 py-2 rounded-xl">Guardar hábito</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="shop-modal" class="fixed inset-0 hidden items-center justify-center z-50">
-    <div class="modal-backdrop absolute inset-0"></div>
-    <div class="relative z-10 w-full max-w-md mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
-      <div class="flex items-center justify-between mb-3">
-        <h4 id="shop-modal-name" class="text-xl font-bold">Confirmar compra</h4>
-        <button id="close-shop-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button>
-      </div>
-      <p id="shop-modal-desc" class="text-slate-300 text-sm mb-4"></p>
-      <div class="flex items-center justify-between text-sm mb-4">
-        <span class="text-slate-400">Costo</span>
-        <span id="shop-modal-price" class="gold-text font-bold"></span>
-      </div>
-      <div class="flex justify-end gap-2">
-        <button id="shop-cancel" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
-        <button id="shop-confirm" class="neon-btn px-4 py-2 rounded-xl">Comprar</button>
+        <div><label class="text-sm text-slate-300 block mb-1">Recompensa XP</label><input id="habit-xp" type="number" min="1" value="20" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white" /></div>
+        <div class="flex justify-end gap-2 pt-2"><button id="habit-cancel" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button><button id="habit-save" class="neon-btn px-4 py-2 rounded-xl">Guardar hábito</button></div>
       </div>
     </div>
   </div>
@@ -285,377 +225,317 @@
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2"></div>
 
   <script>
-    // STORAGE
-    const STORAGE_KEY = 'solo_leveling_tracker_v3_habits';
-    const CHECK_INTERVAL_MS = 60 * 1000; // 1 min for demo; change to 15*60*1000 or 60*60*1000 in prod
+    const STORAGE_KEY = 'solo_leveling_tracker_v4_quests';
+    const CLASS_OPTIONS = {
+      hunter: { name: 'Cazador', desc: 'Más fuerza y agilidad.', bonus: { strength: 2, agility: 1 } },
+      guardian: { name: 'Guardián', desc: 'Más vitalidad y resistencia.', bonus: { vitality: 2, strength: 1 } },
+      mage: { name: 'Mago', desc: 'Más inteligencia y suerte.', bonus: { intelligence: 2, luck: 1 } },
+      scout: { name: 'Explorador', desc: 'Más agilidad y suerte.', bonus: { agility: 2, luck: 1 } }
+    };
 
-    // DEFAULT STATE
     const defaultState = {
       player: {
         name: 'Sung Jinwoo',
-        title: 'Tracker User',
+        title: 'Cazador Rango E',
         level: 1,
         xp: 0,
         gold: 120,
         missedCount: 0,
-        lastAction: null,
+        streakCurrent: 0,
+        streakBest: 0,
+        classId: 'hunter',
         attributes: { strength: 1, agility: 1, vitality: 1, intelligence: 1, luck: 1 },
         points: 3,
-        streakCurrent: 0,
-        streakBest: 0
+        lastAction: null
       },
-      settings: { notificationsEnabled: false },
-      inventory: [],
-      shop: [
-        { id: 'coffee', name: 'Taza de café', cost: 30, desc: 'Una motivación temporal: +1 energía', bonus: { points: 1 } },
-        { id: 'protein', name: 'Suplemento proteico', cost: 80, desc: 'Recuperación rápida: +2 puntos', bonus: { points: 2 } }
-      ],
+      settings: { notificationsEnabled: false, soundsEnabled: true },
       habits: [
-        // sample habit
-        { id: 'h1', name: 'Hacer 30 minutos de cardio', freq: 'daily', reminder: '08:00', xp: 30, lastCompleted: null, streak: 0, bestStreak: 0, enabled: true }
+        { id: 'h1', name: 'Cardio 30 min', freq: 'daily', reminder: '08:00', xp: 30, lastCompleted: null, streak: 0, enabled: true },
+        { id: 'h2', name: 'Fortalecimiento', freq: 'daily', reminder: '18:00', xp: 35, lastCompleted: null, streak: 0, enabled: true },
+        { id: 'h3', name: 'Hydration check', freq: 'daily', reminder: '12:00', xp: 15, lastCompleted: null, streak: 0, enabled: true }
       ],
-      activity: [],
-      currentEvent: '',
+      quests: [
+        { id: 'q1', title: '3 hábitos completados', target: 3, progress: 0, rewardXp: 80, rewardGold: 30, completed: false },
+        { id: 'q2', title: 'Racha de 5 días', target: 5, progress: 0, rewardXp: 110, rewardGold: 45, completed: false },
+        { id: 'q3', title: 'Boss Raid vencido', target: 1, progress: 0, rewardXp: 160, rewardGold: 70, completed: false }
+      ],
+      achievements: [
+        { id: 'first-win', title: 'Primer paso', desc: 'Completa tu primer hábito.', completed: false },
+        { id: 'streak-3', title: 'Racha 3', desc: 'Alcanza 3 días seguidos.', completed: false },
+        { id: 'raid-clear', title: 'Caza elite', desc: 'Vence un raid.', completed: false },
+        { id: 'daily-10', title: 'Niveles del día', desc: 'Gana 10 XP en un día.', completed: false }
+      ],
+      raid: { active: false, name: 'Umbral Bestia', hp: 120, maxHp: 120, damage: 18, rewards: { xp: 140, gold: 70 }, lastBossAt: null },
+      pet: { name: 'Nyx', level: 1, xp: 0, mood: 'Curioso' },
+      contracts: [
+        { id: 'c1', title: 'Contrato: +50% XP', desc: 'Acepta un riesgo por recompensa especial.', reward: { xp: 60 }, risk: 'si fallas, -15 oro', accepted: false },
+        { id: 'c2', title: 'Contrato: +20% oro', desc: 'Más ganancias, más presión.', reward: { gold: 25 }, risk: 'si fallas, -10 XP', accepted: false }
+      ],
+      lootbox: { unlockedAt: null, lastOpened: null, contents: ['Espada de murciélago', 'Botín de sombra', 'Adeptus ring'] },
+      logs: [],
       stats: { totalCompletions: 0, totalMisses: 0 }
     };
 
-    // utils
-    function clone(v) { return JSON.parse(JSON.stringify(v)); }
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          return deepMerge(clone(defaultState), parsed);
-        }
-      } catch (e) { console.warn('loadState err', e); }
-      return clone(defaultState);
-    }
-    function deepMerge(base, incoming) {
-      for (const k in incoming) {
-        if (incoming[k] && typeof incoming[k] === 'object' && !Array.isArray(incoming[k])) base[k] = deepMerge(base[k] || {}, incoming[k]);
-        else base[k] = incoming[k];
-      }
-      return base;
-    }
-
+    function clone(v){ return JSON.parse(JSON.stringify(v)); }
+    function loadState(){ try { const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const parsed = JSON.parse(raw); return deepMerge(clone(defaultState), parsed); } } catch(e){ console.warn('Load state failed', e); } return clone(defaultState); }
+    function deepMerge(base, incoming){ for(const k in incoming){ if(incoming[k] && typeof incoming[k] === 'object' && !Array.isArray(incoming[k])) base[k] = deepMerge(base[k]||{}, incoming[k]); else base[k]=incoming[k]; } return base; }
+    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
     let state = loadState();
-    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
-    function xpRequiredForLevel(l) { return Math.floor(100 * Math.pow(1.28, Math.max(0, l - 1))); }
+    function xpRequiredForLevel(level){ return Math.floor(100 * Math.pow(1.28, Math.max(0, level - 1))); }
+    function capitalize(str){ return str.charAt(0).toUpperCase() + str.slice(1); }
+    function showToast(title, body, duration=3500){ const c = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast rounded-xl p-3 shadow-2xl'; t.innerHTML = `<div class="font-semibold text-sm">${title}</div><div class="text-xs text-slate-300 mt-1">${body}</div>`; c.appendChild(t); setTimeout(()=>t.remove(), duration); }
+    function pushActivity(text){ state.logs.unshift({ text, time: Date.now() }); if(state.logs.length>30) state.logs.pop(); state.player.lastAction = Date.now(); saveState(); renderActivity(); }
+    function playSound(type='success'){ if(!state.settings.soundsEnabled) return; try{ const ctx = new (window.AudioContext||window.webkitAudioContext)(); const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = type === 'fail' ? 'sawtooth' : 'triangle'; o.frequency.value = type === 'fail' ? 120 : 430; g.gain.value = 0.02; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.14); }catch(e){} }
 
-    // Rendering
-    function renderAll() {
-      renderPlayerPanel();
-      renderHabits();
-      renderShop();
-      renderInventory();
-      renderActivity();
-      renderStats();
-      lucide.createIcons();
+    function getClassBonus(){ const c = CLASS_OPTIONS[state.player.classId] || CLASS_OPTIONS.hunter; return c.bonus || {}; }
+    function getAttributeTotal(key){ const base = state.player.attributes[key] || 0; const bonus = getClassBonus()[key] || 0; return base + bonus; }
+    function renderPlayerPanel(){ const p = state.player; const req = xpRequiredForLevel(p.level); const progress = Math.min(100, (p.xp / req) * 100); document.getElementById('player-name').textContent = p.name; document.getElementById('player-title').textContent = p.title; document.getElementById('player-level-badge').textContent = p.level; document.getElementById('player-gold').textContent = p.gold; document.getElementById('missed-count').textContent = p.missedCount || 0; document.getElementById('xp-text').textContent = `${p.xp} / ${req}`; document.getElementById('xp-bar').style.width = `${progress}%`; renderAttributes(); renderClassOptions(); }
+
+    function renderAttributes(){ const el = document.getElementById('attributes-panel'); const entries = ['strength','agility','vitality','intelligence','luck']; el.innerHTML = entries.map(key => { const total = getAttributeTotal(key); return `
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex-1">
+          <div class="flex justify-between text-slate-300"><span>${capitalize(key)}</span><span>${total}</span></div>
+          <div class="flex items-center gap-2 mt-1">
+            <button data-attr="${key}" data-action="minus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">-</button>
+            <div class="text-[10px] text-slate-400">Base ${state.player.attributes[key] || 0}</div>
+            <button data-attr="${key}" data-action="plus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">+</button>
+          </div>
+        </div>
+      </div>
+    `; }).join('');
+
+      const pointsRow = document.createElement('div'); pointsRow.className = 'pt-2 mt-2 border-t border-slate-700 text-right text-xs text-cyan-200'; pointsRow.textContent = `Puntos disponibles: ${state.player.points}`; el.appendChild(pointsRow);
+      document.querySelectorAll('.attr-btn').forEach(btn => btn.addEventListener('click', ()=>{ const attr = btn.dataset.attr; const action = btn.dataset.action; if(action === 'plus' && state.player.points > 0) { state.player.attributes[attr]++; state.player.points--; pushActivity(`[Atributo] +1 ${attr}`); } if(action === 'minus' && (state.player.attributes[attr] || 0) > 1){ state.player.attributes[attr]--; state.player.points++; pushActivity(`[Atributo] -1 ${attr}`); } saveState(); renderPlayerPanel(); }));
     }
 
-    function renderPlayerPanel() {
-      const p = state.player;
-      document.getElementById('player-name').textContent = p.name;
-      document.getElementById('player-title').textContent = p.title;
-      document.getElementById('player-level-badge').textContent = p.level;
-      document.getElementById('player-gold').textContent = p.gold;
-      document.getElementById('missed-count').textContent = p.missedCount || 0;
-
-      const req = xpRequiredForLevel(p.level);
-      const prog = Math.min(100, (p.xp / req) * 100);
-      document.getElementById('xp-text').textContent = `${p.xp} / ${req}`;
-      document.getElementById('xp-bar').style.width = `${prog}%`;
-
-      renderAttributes();
+    function renderClassOptions(){ const el = document.getElementById('class-panel'); el.innerHTML = Object.entries(CLASS_OPTIONS).map(([id, cfg]) => `
+      <button data-class="${id}" class="class-option w-full text-left rounded-xl p-3 border ${state.player.classId===id ? 'active border-cyan-500/40 bg-cyan-500/5' : 'border-slate-700 bg-transparent'}">
+        <div class="font-medium">${cfg.name}</div>
+        <div class="text-xs text-slate-400">${cfg.desc}</div>
+      </button>
+    `).join('');
+      document.querySelectorAll('.class-option').forEach(btn => btn.addEventListener('click', ()=>{ state.player.classId = btn.dataset.class; saveState(); renderPlayerPanel(); pushActivity(`[Clase] ${CLASS_OPTIONS[state.player.classId].name} activada.`); showToast('Clase actualizada', CLASS_OPTIONS[state.player.classId].name); }));
     }
 
-    function renderAttributes() {
-      const el = document.getElementById('attributes-panel');
-      const attr = state.player.attributes;
-      el.innerHTML = Object.keys(attr).map(key => `
-        <div class="flex items-center justify-between gap-3">
-          <div class="flex-1">
-            <div class="flex justify-between text-slate-300"><span>${capitalize(key)}</span><span>${attr[key]}</span></div>
-            <div class="flex items-center gap-2 mt-1">
-              <button data-attr="${key}" data-action="minus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">-</button>
-              <div class="text-[10px] text-slate-400">Base ${attr[key]}</div>
-              <button data-attr="${key}" data-action="plus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">+</button>
+    function renderHabits(){ const c = document.getElementById('habits-container'); if(!state.habits.length){ c.innerHTML = '<div class="text-sm text-slate-400">No tienes hábitos todavía.</div>'; return; }
+    c.innerHTML = state.habits.map(h => {
+      const cooldown = h.freq === 'daily' ? 24*3600*1000 : 7*24*3600*1000;
+      const ready = !h.lastCompleted || (Date.now() - h.lastCompleted) >= cooldown;
+      return `
+        <div class="item-card ${!h.enabled ? 'masked' : ''}">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="font-semibold">${h.name}</h4>
+                <span class="badge">${h.freq === 'daily' ? 'Diario' : 'Semanal'}</span>
+              </div>
+              <p class="text-sm text-slate-400 mt-1">Recordatorio: ${h.reminder || '—'}</p>
+            </div>
+            <div class="text-right text-xs text-slate-300">
+              <div class="gold-text">+${h.xp} XP</div>
+              <div class="text-cyan-200">Streak: ${h.streak || 0}</div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-between gap-4">
+            <div class="text-xs text-slate-400">${ready ? 'Listo para completar' : 'Recarga en curso'}</div>
+            <div class="flex gap-2">
+              <button data-habit-id="${h.id}" class="complete-habit neon-btn px-3 py-1.5 rounded-lg text-sm">${ready ? 'Completar' : 'En espera'}</button>
+              <button data-habit-id="${h.id}" class="edit-habit neon-outline px-2 py-1.5 rounded-lg text-xs">Editar</button>
+              <button data-habit-id="${h.id}" class="toggle-habit neon-outline px-2 py-1.5 rounded-lg text-xs">${h.enabled ? 'Off' : 'On'}</button>
             </div>
           </div>
         </div>
-      `).join('');
-
-      const pointsRow = document.createElement('div');
-      pointsRow.className = 'pt-2 mt-2 border-t border-slate-700 text-right text-xs text-cyan-200';
-      pointsRow.textContent = `Puntos disponibles: ${state.player.points}`;
-      el.appendChild(pointsRow);
-
-      document.querySelectorAll('.attr-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const attrKey = btn.dataset.attr; const act = btn.dataset.action;
-          if (act === 'plus' && state.player.points > 0) { state.player.attributes[attrKey]++; state.player.points--; pushActivity(`[Atributo] +1 ${attrKey}`); }
-          if (act === 'minus' && state.player.attributes[attrKey] > 1) { state.player.attributes[attrKey]--; state.player.points++; pushActivity(`[Atributo] -1 ${attrKey}`); }
-          saveState(); renderAll();
-        });
-      });
+      `;
+    }).join('');
+      document.querySelectorAll('.complete-habit').forEach(btn => btn.addEventListener('click', () => completeHabit(btn.dataset.habitId)));
+      document.querySelectorAll('.edit-habit').forEach(btn => btn.addEventListener('click', () => openHabitModal(btn.dataset.habitId)));
+      document.querySelectorAll('.toggle-habit').forEach(btn => btn.addEventListener('click', () => toggleHabit(btn.dataset.habitId)));
     }
 
-    // Habits
-    function renderHabits() {
-      const container = document.getElementById('habits-container');
-      if (!state.habits.length) { container.innerHTML = '<div class="text-sm text-slate-400">No tienes hábitos. Añade uno nuevo.</div>'; return; }
+    function completeHabit(id){ const h = state.habits.find(x => x.id === id); if(!h || !h.enabled) return; const now = Date.now(); const cooldown = h.freq === 'daily' ? 24*3600*1000 : 7*24*3600*1000; if(h.lastCompleted && (now - h.lastCompleted) < cooldown){ showToast('En recarga', 'Este hábito aún tiene cooldown.'); return; }
+      h.lastCompleted = now; h.streak = (h.streak || 0) + 1; state.player.streakCurrent = (state.player.streakCurrent || 0) + 1; state.player.streakBest = Math.max(state.player.streakBest || 0, state.player.streakCurrent || 0); state.player.xp += h.xp || 10; state.stats.totalCompletions = (state.stats.totalCompletions || 0) + 1; if(h.streak % 3 === 0){ state.player.gold += 10; pushActivity(`[Recompensa] +10 oro por racha en ${h.name}`); }
+      while(state.player.xp >= xpRequiredForLevel(state.player.level)){ state.player.xp -= xpRequiredForLevel(state.player.level); state.player.level += 1; state.player.points += 1; pushActivity(`[Nivel] Subiste al nivel ${state.player.level}`); sendSystemNotification('[SISTEMA]: ¡LEVEL UP!', `Has alcanzado el Nivel ${state.player.level}.`); }
+      state.quests = state.quests.map(q => { if(q.title.includes('3 hábitos')) { q.progress = Math.min(q.target, (q.progress || 0) + 1); } if(q.title.includes('5 días')) { q.progress = Math.min(q.target, Math.max(q.progress||0, state.player.streakCurrent || 0)); } return q; });
+      checkQuestRewards();
+      updateRaidAfterHabit();
+      saveState(); renderAll(); playSound('success'); sendSystemNotification('[SISTEMA]: Hábito completado', `${h.name} completado. +${h.xp} XP`); pushActivity(`[Hábito] ${h.name} completado.`); checkAchievements(); }
 
-      container.innerHTML = state.habits.map(h => {
-        const dueText = nextDueText(h);
-        return `
-          <div class="item-card ${h.enabled ? 'border-cyan-500/30' : 'opacity-60'}">
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <div class="flex items-center gap-2">
-                  <h4 class="font-semibold truncate">${h.name}</h4>
-                  <span class="badge">${h.freq === 'daily' ? 'Diario' : 'Semanal'}</span>
-                </div>
-                <p class="text-sm text-slate-400 mt-1">Recordatorio: ${h.reminder || '—'}</p>
-              </div>
-              <div class="text-right text-xs text-slate-300">
-                <div class="gold-text">+${h.xp} XP</div>
-                <div class="text-cyan-200">Streak: ${h.streak || 0}</div>
-              </div>
-            </div>
-            <div class="mt-3 flex items-center justify-between gap-4">
-              <div class="text-xs text-slate-400">${dueText}</div>
-              <div class="flex gap-2">
-                <button data-id="${h.id}" class="complete-habit neon-btn px-3 py-1.5 rounded-lg text-sm">Completar</button>
-                <button data-id="${h.id}" class="edit-habit neon-outline px-3 py-1.5 rounded-lg text-sm">Editar</button>
-                <button data-id="${h.id}" class="toggle-habit neon-outline px-3 py-1.5 rounded-lg text-sm">${h.enabled ? 'Desactivar' : 'Activar'}</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+    function toggleHabit(id){ const h = state.habits.find(x => x.id === id); if(!h) return; h.enabled = !h.enabled; saveState(); renderHabits(); pushActivity(`[Hábito] ${h.name} ${h.enabled ? 'activado' : 'desactivado'}`); }
 
-      document.querySelectorAll('.complete-habit').forEach(btn => btn.addEventListener('click', () => completeHabit(btn.dataset.id)));
-      document.querySelectorAll('.edit-habit').forEach(btn => btn.addEventListener('click', () => openHabitModal(btn.dataset.id)));
-      document.querySelectorAll('.toggle-habit').forEach(btn => { btn.addEventListener('click', () => toggleHabit(btn.dataset.id)); });
-    }
-
-    function nextDueText(h) {
-      if (!h.lastCompleted) return 'Pendiente';
-      const last = new Date(h.lastCompleted);
-      if (h.freq === 'daily') {
-        const next = new Date(last.getTime() + 24*3600*1000);
-        return `Siguiente: ${next.toLocaleString()}`;
-      } else {
-        const next = new Date(last.getTime() + 7*24*3600*1000);
-        return `Siguiente: ${next.toLocaleString()}`;
-      }
-    }
-
-    function completeHabit(id) {
-      const h = state.habits.find(x => x.id === id);
-      if (!h || !h.enabled) return showToast('Hábito', 'No disponible.');
-      const now = Date.now();
-      // check cooldown
-      const cooldown = h.freq === 'daily' ? 24*3600*1000 : 7*24*3600*1000;
-      if (h.lastCompleted && now - h.lastCompleted < cooldown) { showToast('En recarga', 'Ya completaste este hábito recientemente.'); return; }
-
-      h.lastCompleted = now;
-      h.streak = (h.streak || 0) + 1;
-      h.bestStreak = Math.max(h.bestStreak || 0, h.streak || 0);
-
-      state.player.xp += h.xp || 10;
-      state.stats.totalCompletions = (state.stats.totalCompletions || 0) + 1;
-      state.player.streakCurrent = (state.player.streakCurrent || 0) + 1;
-      state.player.streakBest = Math.max(state.player.streakBest || 0, state.player.streakCurrent || 0);
-
-      // reward gold occasionally
-      if ((h.streak || 0) % 7 === 0) { state.player.gold += 20; pushActivity(`[Recompensa] +20 Motivación por racha semanal en ${h.name}`); }
-
-      // level up check
-      while (state.player.xp >= xpRequiredForLevel(state.player.level)) {
-        state.player.xp -= xpRequiredForLevel(state.player.level);
-        state.player.level += 1;
-        state.player.points += 1;
-        sendSystemNotification('[SISTEMA]: ¡LEVEL UP!', `Has alcanzado el Nivel ${state.player.level}.`);
-        pushActivity(`[Nivel] Subiste al nivel ${state.player.level}`);
-      }
-
-      saveState(); renderAll();
-      sendSystemNotification('[SISTEMA]: Hábito completado', `${h.name} completado. +${h.xp} XP`);
-      pushActivity(`[Hábito] ${h.name} completado.`);
-    }
-
-    function toggleHabit(id) { const h = state.habits.find(x => x.id === id); if(!h) return; h.enabled = !h.enabled; saveState(); renderHabits(); pushActivity(`[Hábito] ${h.name} ${h.enabled ? 'activado' : 'desactivado'}`); }
-
-    // Habit modal (create/edit)
     let editingHabitId = null;
     document.getElementById('add-habit-btn').addEventListener('click', () => openHabitModal());
     document.getElementById('close-habit-modal').addEventListener('click', closeHabitModal);
     document.getElementById('habit-cancel').addEventListener('click', closeHabitModal);
+    function openHabitModal(id){ editingHabitId = id || null; const modalTitle = document.getElementById('habit-modal-title'); if(id){ const h = state.habits.find(x => x.id === id); modalTitle.textContent = 'Editar hábito'; document.getElementById('habit-name').value = h.name; document.getElementById('habit-frequency').value = h.freq; document.getElementById('habit-reminder').value = h.reminder || ''; document.getElementById('habit-xp').value = h.xp || 20; } else { modalTitle.textContent = 'Nuevo hábito'; document.getElementById('habit-name').value=''; document.getElementById('habit-frequency').value='daily'; document.getElementById('habit-reminder').value=''; document.getElementById('habit-xp').value=20; } document.getElementById('habit-modal').classList.remove('hidden'); document.getElementById('habit-modal').classList.add('flex'); }
+    function closeHabitModal(){ document.getElementById('habit-modal').classList.remove('flex'); document.getElementById('habit-modal').classList.add('hidden'); }
+    document.getElementById('habit-save').addEventListener('click', ()=>{ const name = document.getElementById('habit-name').value.trim(); const freq = document.getElementById('habit-frequency').value; const reminder = document.getElementById('habit-reminder').value; const xp = parseInt(document.getElementById('habit-xp').value, 10) || 10; if(!name){ showToast('Error', 'El nombre del hábito es obligatorio.'); return; }
+      if(editingHabitId){ const h = state.habits.find(x => x.id === editingHabitId); h.name = name; h.freq = freq; h.reminder = reminder; h.xp = xp; pushActivity(`[Hábito] Editado: ${name}`); }
+      else { const id = 'h' + Date.now(); state.habits.push({ id, name, freq, reminder, xp, lastCompleted:null, streak:0, enabled:true }); pushActivity(`[Hábito] Nuevo: ${name}`); }
+      saveState(); closeHabitModal(); renderAll(); });
 
-    function openHabitModal(id) {
-      editingHabitId = id || null;
-      document.getElementById('habit-modal-title').textContent = id ? 'Editar hábito' : 'Nuevo hábito';
-      if (id) {
-        const h = state.habits.find(x => x.id === id);
-        document.getElementById('habit-name').value = h.name;
-        document.getElementById('habit-frequency').value = h.freq;
-        document.getElementById('habit-reminder').value = h.reminder || '';
-        document.getElementById('habit-xp').value = h.xp || 20;
-      } else {
-        document.getElementById('habit-name').value = '';
-        document.getElementById('habit-frequency').value = 'daily';
-        document.getElementById('habit-reminder').value = '';
-        document.getElementById('habit-xp').value = 20;
-      }
-      document.getElementById('habit-modal').classList.remove('hidden');
-      document.getElementById('habit-modal').classList.add('flex');
-    }
-
-    function closeHabitModal() { document.getElementById('habit-modal').classList.remove('flex'); document.getElementById('habit-modal').classList.add('hidden'); }
-
-    document.getElementById('habit-save').addEventListener('click', () => {
-      const name = document.getElementById('habit-name').value.trim();
-      const freq = document.getElementById('habit-frequency').value;
-      const reminder = document.getElementById('habit-reminder').value;
-      const xp = parseInt(document.getElementById('habit-xp').value, 10) || 10;
-      if (!name) return showToast('Error', 'El nombre del hábito es requerido');
-
-      if (editingHabitId) {
-        const h = state.habits.find(x => x.id === editingHabitId);
-        h.name = name; h.freq = freq; h.reminder = reminder; h.xp = xp;
-        pushActivity(`[Hábito] Modificado: ${name}`);
-      } else {
-        const id = 'h' + Date.now();
-        state.habits.push({ id, name, freq, reminder, xp, lastCompleted: null, streak: 0, bestStreak: 0, enabled: true });
-        pushActivity(`[Hábito] Nuevo hábito: ${name}`);
-      }
-      saveState(); closeHabitModal(); renderAll();
-    });
-
-    // Miss handling (apply penalty if habit missed beyond due)
-    function checkHabitsDue() {
-      const now = Date.now();
-      let anyMiss = false;
-      state.habits.forEach(h => {
-        if (!h.enabled) return;
-        const last = h.lastCompleted || 0;
-        const cooldown = h.freq === 'daily' ? 24*3600*1000 : 7*24*3600*1000;
-        if (now - last > cooldown + 5000) { // grace 5s
-          // consider missed if not already penalized for this window
-          if (!h._missedAt || (now - h._missedAt) > cooldown) {
-            h._missedAt = now;
-            h.streak = Math.max(0, (h.streak || 0) - 1);
-            state.player.missedCount = (state.player.missedCount || 0) + 1;
-            state.stats.totalMisses = (state.stats.totalMisses || 0) + 1;
-            state.player.streakCurrent = 0; // reset global streak
-            anyMiss = true;
-            pushActivity(`[Hábito] Falta detectada: ${h.name}. Streak reducido a ${h.streak}`);
-            sendSystemNotification('[SISTEMA]: Hábito no realizado', `No completaste: ${h.name}. Streak reducido.`);
-            // small penalty
-            state.player.gold = Math.max(0, state.player.gold - 5);
-            saveState();
-          }
-        }
-      });
-      if (anyMiss) renderAll();
-    }
-
-    // Notifications
-    function isNotificationSupported() { return 'Notification' in window; }
-    const notifBtn = document.getElementById('notif-btn'); const notifStatus = document.getElementById('notif-status');
-    function updateNotificationUI() {
-      if (!isNotificationSupported()) { notifBtn.classList.add('opacity-60','cursor-not-allowed'); notifBtn.innerHTML = '<span data-lucide="bell-off"></span> [NO SOPORTADO]'; notifStatus.textContent = 'No soportado'; lucide.createIcons(); return; }
-      const p = Notification.permission; if (p === 'granted') { notifBtn.innerHTML = '<span data-lucide="check-circle"></span> [ACTIVAS]'; notifBtn.classList.add('pulse'); notifStatus.textContent = 'Granted'; } else if (p === 'denied') { notifBtn.innerHTML = '<span data-lucide="slash"></span> [DENEGADO]'; notifBtn.classList.remove('pulse'); notifStatus.textContent = 'Denied'; } else { notifBtn.innerHTML = '<span data-lucide="bell"></span> [ACTIVAR]'; notifStatus.textContent = 'Default'; }
-      lucide.createIcons();
-    }
-    notifBtn.addEventListener('click', async () => { if (!isNotificationSupported()) return showToast('Notificaciones','No soportadas'); const r = await Notification.requestPermission(); state.settings.notificationsEnabled = r === 'granted'; saveState(); updateNotificationUI(); if (r === 'granted') { sendSystemNotification('[SISTEMA] Notificaciones activadas','Recibirás recordatorios.'); pushActivity('[Sistema] Notificaciones activadas'); } });
-
-    function sendSystemNotification(title, body) { if (!isNotificationSupported()) { showToast(title, body); return; } if (Notification.permission === 'granted') { try { const n = new Notification(title, { body, tag: 'sl-tracker' }); setTimeout(() => n.close(), 6000); } catch (e) { showToast(title, body); } } else showToast(title, body); }
-
-    // Shop / Inventory
-    function renderShop() { const c = document.getElementById('shop-container'); c.innerHTML = state.shop.map(i => `
-      <div class="item-card">
-        <div class="flex items-center justify-between gap-3">
-          <div><div class="font-medium">${i.name}</div><div class="text-[10px] text-slate-400">${i.desc}</div></div>
-          <div class="text-gold font-semibold">${i.cost}</div>
-        </div>
-        <button data-id="${i.id}" class="buy-btn neon-btn w-full mt-3 py-2 rounded-lg text-sm">Comprar</button>
-      </div>
-    `).join(''); document.querySelectorAll('.buy-btn').forEach(b => b.addEventListener('click', () => openShopModal(b.dataset.id))); }
-
-    function openShopModal(id) { const item = state.shop.find(x => x.id === id); if(!item) return; state.pendingPurchase = id; document.getElementById('shop-modal-name').textContent = item.name; document.getElementById('shop-modal-desc').textContent = item.desc; document.getElementById('shop-modal-price').textContent = `${item.cost} oro`; document.getElementById('shop-modal').classList.remove('hidden'); document.getElementById('shop-modal').classList.add('flex'); }
-    function closeShopModal(){ document.getElementById('shop-modal').classList.remove('flex'); document.getElementById('shop-modal').classList.add('hidden'); state.pendingPurchase = null; }
-    document.getElementById('shop-confirm').addEventListener('click', ()=>{ const id = state.pendingPurchase; const item = state.shop.find(x=>x.id===id); if(!item) return closeShopModal(); if(state.player.gold < item.cost){ showToast('Fondos insuficientes','No tienes suficiente motivación (oro)'); closeShopModal(); return; } state.player.gold -= item.cost; state.inventory.push({ id: item.id+'-'+Date.now(), name: item.name, desc: item.desc, bonus: item.bonus || {} }); saveState(); renderInventory(); renderShop(); closeShopModal(); pushActivity(`[Tienda] Comprado ${item.name}`); sendSystemNotification('[SISTEMA] Compra exitosa', `${item.name} añadido a inventario`); });
-    document.getElementById('shop-cancel').addEventListener('click', closeShopModal); document.getElementById('close-shop-modal').addEventListener('click', closeShopModal);
-
-    function renderInventory(){ const c = document.getElementById('inventory-container'); const count = document.getElementById('inventory-count'); count.textContent = state.inventory.length; c.innerHTML = state.inventory.length ? state.inventory.map(it=>`
-      <div class="item-card">
-        <div class="flex items-center justify-between">
+    function renderQuests(){ const c = document.getElementById('quests-container'); c.innerHTML = state.quests.map(q => {
+      const percent = Math.min(100, (q.progress / q.target) * 100);
+      return `
+      <div class="item-card ${q.completed ? 'achievement-done' : ''}">
+        <div class="flex items-start justify-between gap-3">
           <div>
-            <div class="font-medium">${it.name}</div>
-            <div class="text-xs text-slate-400">${it.desc || ''}</div>
+            <div class="font-semibold">${q.title}</div>
+            <div class="text-sm text-slate-400">${q.completed ? 'Completado' : `${q.progress} / ${q.target}`}</div>
+          </div>
+          <div class="text-right text-xs text-slate-300"><div class="gold-text">+${q.rewardGold} Oro</div><div class="text-cyan-200">+${q.rewardXp} XP</div></div>
+        </div>
+        <div class="progress mt-3"><div class="progress-bar" style="width:${percent}%"></div></div>
+      </div>
+      `;
+    }).join(''); }
+
+    function checkQuestRewards(){ state.quests = state.quests.map(q => {
+      const updated = { ...q };
+      if(!updated.completed){
+        if(updated.title.includes('3 hábitos') && updated.progress >= updated.target){ updated.completed = true; state.player.xp += updated.rewardXp; state.player.gold += updated.rewardGold; pushActivity(`[Quest] ${updated.title} completada.`); }
+        if(updated.title.includes('5 días') && updated.progress >= updated.target){ updated.completed = true; state.player.xp += updated.rewardXp; state.player.gold += updated.rewardGold; pushActivity(`[Quest] ${updated.title} completada.`); }
+        if(updated.title.includes('Boss Raid') && updated.progress >= updated.target){ updated.completed = true; state.player.xp += updated.rewardXp; state.player.gold += updated.rewardGold; pushActivity(`[Quest] ${updated.title} completada.`); }
+      }
+      return updated;
+    });
+      saveState(); renderAll(); }
+
+    function renderAchievements(){ const c = document.getElementById('achievements-container'); const all = state.achievements; document.getElementById('achievement-counter').textContent = `${all.filter(a => a.completed).length}/${all.length}`;
+      c.innerHTML = all.map(a => `
+        <div class="item-card ${a.completed ? 'achievement-done' : 'masked'}">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="font-medium">${a.title}</div>
+              <div class="text-xs text-slate-400">${a.desc}</div>
+            </div>
+            <div class="badge">${a.completed ? 'Unlocked' : 'Locked'}</div>
           </div>
         </div>
+      `).join(''); }
+
+    function checkAchievements(){
+      const first = state.achievements.find(a => a.id === 'first-win'); if(!first.completed && state.stats.totalCompletions >= 1){ first.completed = true; }
+      const streak3 = state.achievements.find(a => a.id === 'streak-3'); if(!streak3.completed && state.player.streakBest >= 3){ streak3.completed = true; }
+      const raidClear = state.achievements.find(a => a.id === 'raid-clear'); if(!raidClear.completed && state.quests.find(q => q.title.includes('Boss Raid') && q.completed)) { raidClear.completed = true; }
+      const daily10 = state.achievements.find(a => a.id === 'daily-10'); if(!daily10.completed && state.player.xp >= 10){ daily10.completed = true; }
+      if (state.achievements.some(a => a.completed)) { saveState(); }
+    }
+
+    function renderRaid(){ const r = state.raid; const raidState = document.getElementById('raid-state'); const raidName = document.getElementById('raid-name'); const raidDesc = document.getElementById('raid-desc'); const raidHp = document.getElementById('raid-hp'); const raidBar = document.getElementById('raid-bar');
+      if(r.active){ raidState.textContent = 'Live'; raidName.textContent = r.name; raidDesc.textContent = 'Derrota la criatura para ganar botín extra.'; raidHp.textContent = `${r.hp} / ${r.maxHp}`; raidBar.style.width = `${(r.hp / r.maxHp) * 100}%`; }
+      else { raidState.textContent = 'Dormant'; raidName.textContent = 'No hay raid activo'; raidDesc.textContent = 'Completa hábitos para desencadenar un combate.'; raidHp.textContent = '0'; raidBar.style.width = '0%'; }
+    }
+
+    function generateRaid(){ const names = ['Umbral Bestia', 'Jefe de la Mina', 'Cazador Silencioso']; const picked = names[Math.floor(Math.random() * names.length)]; state.raid = { active: true, name: picked, hp: 120, maxHp: 120, damage: 18, rewards: { xp: 140, gold: 70 } }; saveState(); renderRaid(); pushActivity(`[Raid] ${picked} ha aparecido.`); sendSystemNotification('[SISTEMA]: Raid activo', `${picked} se ha materializado.¡Prepárate!`); }
+    document.getElementById('generate-raid').addEventListener('click', generateRaid);
+    document.getElementById('raid-attack').addEventListener('click', ()=>{ if(!state.raid.active){ showToast('Raid inactivo', 'Primero inicia un raid.'); return; } const dmg = 22 + getAttributeTotal('strength') + Math.floor(getAttributeTotal('agility') / 2); state.raid.hp = Math.max(0, state.raid.hp - dmg); state.quests = state.quests.map(q => q.title.includes('Boss Raid') ? { ...q, progress: Math.min(q.target, (q.progress || 0) + (dmg >= 20 ? 1 : 0)) } : q); if(state.raid.hp <= 0){ state.raid.active = false; state.player.xp += state.raid.rewards.xp; state.player.gold += state.raid.rewards.gold; pushActivity(`[Raid] ${state.raid.name} derrotado. +${state.raid.rewards.xp} XP, +${state.raid.rewards.gold} Oro.`); sendSystemNotification('[SISTEMA]: Raid vencido', `${state.raid.name} ha sido derrotado.`); showToast('Raid vencido', `${state.raid.name} ha caído.`); const quest = state.quests.find(q => q.title.includes('Boss Raid')); if(quest){ quest.progress = quest.target; } checkQuestRewards(); } saveState(); renderRaid(); renderQuests(); renderPlayerPanel(); checkAchievements(); });
+    document.getElementById('raid-skip').addEventListener('click', ()=>{ state.raid.active = false; state.player.missedCount = (state.player.missedCount || 0) + 1; playSound('fail'); pushActivity('[Raid] Fallaste el combate.'); sendSystemNotification('[SISTEMA]: Raid fallido', 'Perdiste la oportunidad de botín extra.'); saveState(); renderRaid(); });
+
+    function renderPet(){ const p = state.pet; const box = document.getElementById('pet-box'); box.innerHTML = `
+      <div class="flex items-center justify-between gap-3">
+        <div><div class="font-semibold">${p.name}</div><div class="text-xs text-slate-400">${p.mood}</div></div>
+        <span class="badge">Nivel ${p.level}</span>
       </div>
-    `).join('') : '<div class="text-sm text-slate-400">Inventario vacío</div>'; }
+      <div class="mt-3 progress"><div class="progress-bar" style="width:${Math.min(100, (p.xp / (p.level * 100)) * 100)}%"></div></div>
+      <div class="mt-3 flex gap-2">
+        <button id="pet-feed" class="neon-btn flex-1 px-3 py-2 rounded-lg text-sm">Alimentar</button>
+        <button id="pet-bond" class="neon-outline flex-1 px-3 py-2 rounded-lg text-sm">Vincular</button>
+      </div>
+    `;
+      document.getElementById('pet-feed').addEventListener('click', ()=>{ state.pet.xp += 15; if(state.pet.xp >= state.pet.level * 100){ state.pet.level += 1; state.pet.mood = 'Feliz'; state.player.gold += 10; } else { state.pet.mood = 'Contento'; } saveState(); renderPet(); renderPlayerPanel(); pushActivity(`[Mascota] ${state.pet.name} ganó vínculo.`); });
+      document.getElementById('pet-bond').addEventListener('click', ()=>{ state.pet.level += 1; state.player.points += 1; pushActivity(`[Mascota] ${state.pet.name} avanzó al nivel ${state.pet.level}.`); saveState(); renderPet(); renderPlayerPanel(); });
+    }
 
-    // Activity
-    function pushActivity(text){ state.activity.unshift({ text, time: Date.now() }); if(state.activity.length>50) state.activity.pop(); saveState(); renderActivity(); }
-    function renderActivity(){ const log = document.getElementById('activity-log'); if(!state.activity.length) { log.innerHTML = '<div class="text-sm text-slate-400">Sin actividad registrada.</div>'; return; } log.innerHTML = state.activity.map(e=>`<div class="rounded-xl border border-slate-700 bg-slate-900/30 p-2"><div class="text-[10px] text-slate-500">${new Date(e.time).toLocaleString()}</div><div class="text-sm text-slate-200 mt-1">${e.text}</div></div>`).join(''); document.getElementById('last-daily').textContent = state.player.lastAction ? `Última acción: ${new Date(state.player.lastAction).toLocaleString()}` : 'Última acción: nunca'; }
+    function renderLootbox(){ const box = document.getElementById('lootbox-box'); const opened = state.lootbox.lastOpened ? new Date(state.lootbox.lastOpened).toLocaleDateString() : 'Nunca'; const canOpen = !state.lootbox.lastOpened || (Date.now() - state.lootbox.lastOpened) > 24*3600*1000; box.innerHTML = `
+      <div class="text-sm text-slate-300">Última apertura: ${opened}</div>
+      <div class="mt-3 text-xs text-slate-400">Botín diario: ${state.lootbox.contents.join(' • ')}</div>
+      <button id="open-lootbox" class="neon-btn w-full mt-4 py-2.5 rounded-xl ${canOpen ? '' : 'opacity-50 cursor-not-allowed'}" ${canOpen ? '' : 'disabled'}>${canOpen ? 'Abrir caja' : 'Caja en recarga'}</button>
+    `;
+      document.getElementById('open-lootbox')?.addEventListener('click', ()=>{ if(!state.lootbox.lastOpened || (Date.now() - state.lootbox.lastOpened) > 24*3600*1000){ const reward = state.lootbox.contents[Math.floor(Math.random() * state.lootbox.contents.length)]; state.lootbox.lastOpened = Date.now(); state.player.gold += 20; state.player.xp += 35; pushActivity(`[Botín] ${reward} obtenido.`); showToast('Caja abierta', `${reward} añadido.`); saveState(); renderLootbox(); renderPlayerPanel(); } }); }
 
-    // Stats
-    function renderStats(){ const total = state.stats.totalCompletions || 0; const misses = state.stats.totalMisses || 0; const rate = total + misses === 0 ? 0 : Math.round((total / (total + misses)) * 100); document.getElementById('completion-rate').textContent = rate + '%'; document.getElementById('streak-current').textContent = state.player.streakCurrent || 0; document.getElementById('streak-best').textContent = state.player.streakBest || 0; }
+    function renderContracts(){ const c = document.getElementById('contracts-container'); c.innerHTML = state.contracts.map(contract => `
+      <div class="item-card ${contract.accepted ? 'achievement-done' : ''}">
+        <div class="flex justify-between gap-2">
+          <div>
+            <div class="font-medium">${contract.title}</div>
+            <div class="text-xs text-slate-400">${contract.desc}</div>
+          </div>
+          <button data-contract-id="${contract.id}" class="accept-contract neon-btn px-2 py-1.5 rounded-lg text-xs">${contract.accepted ? 'Activo' : 'Aceptar'}</button>
+        </div>
+        <div class="text-[10px] text-slate-400 mt-2">${contract.risk}</div>
+      </div>
+    `).join('');
+      document.querySelectorAll('.accept-contract').forEach(btn => btn.addEventListener('click', ()=>{ const contract = state.contracts.find(c => c.id === btn.dataset.contractId); if(!contract) return; contract.accepted = !contract.accepted; if(contract.accepted){ state.player.gold += contract.reward.gold || 0; state.player.xp += contract.reward.xp || 0; } else { state.player.xp = Math.max(0, state.player.xp - 10); } saveState(); renderContracts(); renderPlayerPanel(); pushActivity(`[Contrato] ${contract.title} ${contract.accepted ? 'aceptado' : 'cancelado'}`); })); }
 
-    // Export / Import
-    document.getElementById('export-btn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sl-tracker-backup.json'; a.click(); URL.revokeObjectURL(url); showToast('Exportado', 'Backup JSON descargado.');
-    });
+    function renderActivity(){ const log = document.getElementById('activity-log'); if(!state.logs.length){ log.innerHTML = '<div class="text-sm text-slate-400">Sin actividad todavía.</div>'; return; } log.innerHTML = state.logs.slice(0,12).map(event => `
+      <div class="rounded-xl border border-slate-700 bg-slate-900/30 p-2">
+        <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500">${new Date(event.time).toLocaleTimeString()}</div>
+        <div class="text-sm text-slate-200 mt-1">${event.text}</div>
+      </div>
+    `).join(''); document.getElementById('last-daily').textContent = state.player.lastAction ? `Última acción: ${new Date(state.player.lastAction).toLocaleString()}` : 'Última acción: nunca'; }
 
-    document.getElementById('import-btn').addEventListener('click', () => {
-      const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json'; input.onchange = e => {
-        const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { try { const parsed = JSON.parse(ev.target.result); state = deepMerge(clone(defaultState), parsed); saveState(); renderAll(); showToast('Importado', 'Backup restaurado.'); } catch (err) { showToast('Error', 'Archivo inválido'); } }; r.readAsText(f);
-      }; input.click();
-    });
+    function updateNotificationUI(){ if(!('Notification' in window)){ notifBtn.classList.add('opacity-60','cursor-not-allowed'); notifBtn.innerHTML = '<span data-lucide="bell-off"></span> [SISTEMA: NO SOPORTADO]'; notifStatus.textContent='No soportado'; lucide.createIcons(); return; }
+      const p = Notification.permission; if(p === 'granted'){ notifBtn.innerHTML = '<span data-lucide="check-circle"></span> [SISTEMA: NOTIFICACIONES ACTIVAS]'; notifBtn.classList.add('pulse'); notifStatus.textContent='Granted'; } else if(p === 'denied'){ notifBtn.innerHTML = '<span data-lucide="slash"></span> [SISTEMA: DENEGADAS]'; notifBtn.classList.remove('pulse'); notifStatus.textContent='Denied'; } else { notifBtn.innerHTML = '<span data-lucide="bell"></span> [SISTEMA: ACTIVAR NOTIFICACIONES]'; notifBtn.classList.remove('pulse'); notifStatus.textContent='Default'; }
+      lucide.createIcons(); }
 
-    // Periodic checks: reminders & misses
-    function scheduleRemindersAndChecks() {
-      // reminders for habits with a time set
-      state.habits.forEach(h => {
-        if (!h.reminder || !h.enabled) return;
-        // compute next reminder time today or tomorrow
-        const [hh, mm] = (h.reminder || '').split(':').map(Number);
-        if (Number.isNaN(hh)) return;
-        const now = new Date();
-        const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm || 0, 0);
-        let delay = target.getTime() - now.getTime();
-        if (delay < 0) delay += 24*3600*1000; // tomorrow
-        setTimeout(() => {
-          // send notification if permission and enabled
-          if (Notification.permission === 'granted') sendSystemNotification('[RECORDATORIO] ' + h.name, `Hora de: ${h.name}`);
-          else showToast('[RECORDATORIO] ' + h.name, `Hora de: ${h.name}`);
-        }, delay);
+    function sendSystemNotification(title, body){ if(!('Notification' in window)){ showToast(title, body); return; }
+      if(Notification.permission === 'granted'){ try{ const n = new Notification(title, { body, tag: 'sl-tracker' }); setTimeout(()=>n.close(), 5000);} catch(e){ showToast(title, body); } } else { showToast(title, body); } }
+
+    const notifBtn = document.getElementById('notif-btn'); const notifStatus = document.getElementById('notif-status');
+    notifBtn.addEventListener('click', async ()=>{ if(!('Notification' in window)){ showToast('No soportado', 'Este navegador no soporta Web Notifications.'); return; } const result = await Notification.requestPermission(); state.settings.notificationsEnabled = result === 'granted'; saveState(); updateNotificationUI(); if(result === 'granted'){ sendSystemNotification('[SISTEMA]: Notificaciones activadas', 'Recibirás recordatorios del sistema.'); pushActivity('[Sistema] Notificaciones activadas.'); } });
+
+    document.getElementById('edit-player-btn').addEventListener('click', ()=>{ document.getElementById('edit-name').value = state.player.name; document.getElementById('edit-title').value = state.player.title; document.getElementById('edit-modal').classList.remove('hidden'); });
+    document.getElementById('close-modal').addEventListener('click', ()=> document.getElementById('edit-modal').classList.add('hidden'));
+    document.getElementById('cancel-edit').addEventListener('click', ()=> document.getElementById('edit-modal').classList.add('hidden'));
+    document.getElementById('save-edit').addEventListener('click', ()=>{ const name = document.getElementById('edit-name').value.trim() || 'Anónimo'; const title = document.getElementById('edit-title').value.trim() || 'Cazador'; state.player.name = name; state.player.title = title; saveState(); renderPlayerPanel(); pushActivity(`[Jugador] ${name} / ${title}`); document.getElementById('edit-modal').classList.add('hidden'); showToast('Guardado', 'Perfil actualizado.'); });
+
+    function renderAll(){ renderPlayerPanel(); renderHabits(); renderQuests(); renderAchievements(); renderRaid(); renderPet(); renderLootbox(); renderContracts(); renderActivity(); updateNotificationUI(); lucide.createIcons(); }
+
+    function maybeMissedHabitCheck(){ const now = Date.now(); state.habits.forEach(h => { if(!h.enabled) return; const cooldown = h.freq === 'daily' ? 24*3600*1000 : 7*24*3600*1000; if(h.lastCompleted && now - h.lastCompleted > cooldown + 10000){ state.player.missedCount = (state.player.missedCount || 0) + 1; state.player.streakCurrent = 0; h.streak = 0; state.stats.totalMisses = (state.stats.totalMisses || 0) + 1; pushActivity(`[Sistema] Falta detectada: ${h.name}.`); }
+      if(!h.lastCompleted && now - (state.player.lastAction || now) > 12*3600*1000){ state.player.missedCount = (state.player.missedCount || 0) + 1; }
+    }); saveState(); renderAll(); }
+
+    setInterval(()=>{ maybeMissedHabitCheck(); if(Math.random() < 0.25){ const messages = ['Evento del sistema: un dungeon se abre en otra dimensión.', 'Tienes una misión extra disponible.', 'Un cazador rival dejó una recompensa en el mapa.', 'Un portal ofrece botín de rareza media.']; const msg = messages[Math.floor(Math.random() * messages.length)]; sendSystemNotification('[SISTEMA]: Evento', msg); } }, 120000);
+
+    // install prompt support
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.createElement('button');
+      btn.textContent = 'Instalar App';
+      btn.className = 'fixed bottom-6 left-6 z-50 neon-btn px-4 py-2 rounded-xl text-sm';
+      btn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        btn.remove();
       });
+      document.body.appendChild(btn);
+    });
 
-      // check misses
-      setTimeout(function tick(){ checkHabitsDue(); setTimeout(tick, CHECK_INTERVAL_MS); }, CHECK_INTERVAL_MS);
-    }
+    // create a lighweight PWA manifest inline
+    (() => {
+      const manifest = {
+        name: 'S.L.traker',
+        short_name: 'SLT',
+        start_url: './',
+        display: 'standalone',
+        background_color: '#071021',
+        theme_color: '#071021',
+        icons: [{ src: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#071021"/><circle cx="64" cy="64" r="34" fill="#00f0ff"/><path d="M64 26v76M26 64h76" stroke="#061a2b" stroke-width="6" stroke-linecap="round"/></svg>'), sizes: '128x128', type: 'image/svg+xml' }]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = url;
+      document.head.appendChild(link);
+    })();
 
-    // helpers
-    function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
-
-    // initial events
-    document.getElementById('refresh-habits').addEventListener('click', () => { const messages = ['Hoy es un buen día para moverte','Pequeños pasos, grandes cambios','Aprovecha 20 minutos para entrenar']; const m = messages[Math.floor(Math.random()*messages.length)]; state.currentEvent = m; pushActivity('[Evento] '+m); showToast('Evento', m); renderEventCard(); });
-    function renderEventCard(){ document.getElementById('event-card')?.textContent = state.currentEvent || 'Sin eventos activos.'; }
-
-    // initialization
-    function init() {
-      renderAll(); updateNotificationUI(); scheduleRemindersAndChecks(); renderEventCard();
-    }
-
+    function init(){ renderAll(); updateNotificationUI(); if('Notification' in window && Notification.permission === 'default'){ showToast('Notificaciones', 'Puedes activar recordatorios del sistema desde el botón del perfil.'); } }
     init();
   </script>
 </body>
