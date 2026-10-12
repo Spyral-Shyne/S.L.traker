@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#071021" />
+  <title>S.L.traker — Solo Leveling Tracker</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #071021;
+      --bg2: #09182d;
+      --panel: rgba(9, 17, 29, 0.78);
+      --panel-strong: rgba(12, 21, 35, 0.96);
+      --muted: #8ea4b8;
+      --neon: #00f0ff;
+      --neon-2: #61d7ff;
+      --cyan: #80f4ff;
+      --gold: #f8c857;
+      --danger: #ff6b6b;
+      --green: #6ee7a5;
+      --purple: #a78bfa;
+      --shadow: rgba(0, 240, 255, 0.2);
+    }
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(0,240,255,0.08), transparent 35%),
+        linear-gradient(180deg, #020817 0%, #071021 60%);
+      color: #def9ff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    body {
+      padding: 24px;
+    }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(0,240,255,0.06);
+      backdrop-filter: blur(5px);
+    }
+
+    .panel-title {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .neon-btn {
+      background: linear-gradient(90deg, rgba(0,240,255,0.12), rgba(0,240,255,0.05));
+      border: 1px solid rgba(0,240,255,0.25);
+      color: var(--neon);
+      box-shadow: inset 0 0 8px rgba(0,240,255,0.08), 0 0 10px rgba(0,240,255,0.12);
+      text-shadow: 0 0 10px rgba(0,240,255,0.25);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .neon-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: inset 0 0 8px rgba(0,240,255,0.12), 0 0 16px rgba(0,240,255,0.2);
+    }
+
+    .neon-outline {
+      border: 1px solid rgba(0,240,255,0.22);
+      color: var(--neon);
+      background: rgba(0,240,255,0.02);
+    }
+
+    .gold-text { color: var(--gold); }
+    .danger-text { color: var(--danger); }
+    .green-text { color: var(--green); }
+
+    .progress {
+      height: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+      border-radius: 999px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon), #62f3ff 70%, #d3ffff);
+      box-shadow: 0 0 12px rgba(0,240,255,0.4);
+      border-radius: inherit;
+      transition: width 0.25s ease;
+    }
+
+    .stat-pill {
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.02);
+      color: #dfeeff;
+    }
+
+    .scroll-panel {
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    .item-card {
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      border-radius: 0.75rem;
+      padding: 0.8rem;
+    }
+
+    .xp-ring {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle, rgba(0,240,255,0.12) 0%, rgba(0,0,0,0) 60%);
+      border: 1px solid rgba(0,240,255,0.2);
+      box-shadow: inset 0 0 18px rgba(0,240,255,0.12);
+    }
+
+    .toast {
+      background: rgba(5, 10, 18, 0.92);
+      border: 1px solid rgba(0,240,255,0.08);
+      color: #def9ff;
+      min-width: 220px;
+      max-width: 320px;
+    }
+
+    .modal-backdrop {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #d7ecff;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .pulse {
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(0,240,255,0.12); }
+      50% { box-shadow: 0 0 20px rgba(0,240,255,0.16); }
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-7xl mx-auto grid md:grid-cols-12 gap-6">
+    <!-- Perfil / Estado -->
+    <aside class="md:col-span-3 glass rounded-2xl p-5">
+      <div class="flex items-center gap-4">
+        <div class="xp-ring">
+          <div class="text-center">
+            <div class="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Lvl</div>
+            <div id="player-level-badge" class="text-2xl font-bold text-cyan-200">1</div>
+          </div>
+        </div>
+        <div class="min-w-0">
+          <div class="panel-title">Jugador</div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 id="player-name" class="text-2xl font-bold truncate">Sung Jinwoo</h2>
+            <span id="player-title" class="badge">Cazador Rango E</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-3">
+        <div class="stat-pill rounded-xl p-3">
+          <div class="flex justify-between text-xs text-slate-300">
+            <span>XP</span>
+            <span id="xp-text">0 / 100</span>
+          </div>
+          <div class="progress mt-2">
+            <div id="xp-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="stat-pill rounded-xl p-3">
+            <div class="text-slate-400">Oro</div>
+            <div id="player-gold" class="text-xl font-semibold text-yellow-300">120</div>
+          </div>
+          <div class="stat-pill rounded-xl p-3">
+            <div class="text-slate-400">Faltas</div>
+            <div id="missed-count" class="text-xl font-semibold text-red-300">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-3">
+        <button id="edit-player-btn" class="neon-btn w-full py-2.5 rounded-xl flex items-center justify-center gap-2">
+          <span data-lucide="edit-3"></span>
+          Editar Nombre / Título
+        </button>
+
+        <button id="notif-btn" class="neon-outline w-full py-2.5 rounded-xl flex items-center justify-center gap-2">
+          <span data-lucide="bell"></span>
+          [SISTEMA: ACTIVAR NOTIFICACIONES]
+        </button>
+
+        <div class="text-xs text-slate-400 text-center">Estado: <span id="notif-status">Default</span></div>
+      </div>
+
+      <div class="mt-6 stat-pill rounded-xl p-3">
+        <div class="panel-title mb-2">Atributos</div>
+        <div id="attributes-panel" class="space-y-2 text-sm"></div>
+      </div>
+    </aside>
+
+    <!-- Centro -->
+    <main class="md:col-span-6 space-y-6">
+      <!-- Misiones -->
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Misiones</h3>
+          <button id="refresh-missions" class="px-3 py-1.5 rounded-lg neon-outline text-xs">Generar evento</button>
+        </div>
+
+        <div id="missions-container" class="space-y-3"></div>
+      </section>
+
+      <!-- Eventos / ranking -->
+      <section class="glass rounded-2xl p-5">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Eventos & Ranking</h3>
+          <span class="badge">Live</span>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="stat-pill rounded-xl p-3">
+            <div class="panel-title mb-2">Evento de sistema</div>
+            <div id="event-card" class="text-sm text-slate-300">Sin eventos activos.</div>
+          </div>
+
+          <div class="stat-pill rounded-xl p-3">
+            <div class="panel-title mb-2">Progreso</div>
+            <div id="ranking-card" class="space-y-2 text-sm"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Log -->
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xl font-bold">Registro de actividad</h3>
+          <span id="last-daily" class="text-xs text-slate-400">Última misión: nunca</span>
+        </div>
+        <div id="activity-log" class="scroll-panel space-y-2"></div>
+      </section>
+    </main>
+
+    <!-- Lado derecho -->
+    <aside class="md:col-span-3 space-y-6">
+      <!-- Tienda -->
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Tienda</h3>
+          <span class="badge">Inventario</span>
+        </div>
+        <div id="shop-container" class="space-y-3"></div>
+      </section>
+
+      <!-- Inventario -->
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Inventario</h3>
+          <span class="badge" id="inventory-count">0 / 0</span>
+        </div>
+        <div id="inventory-container" class="space-y-3"></div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Modal para editar jugador -->
+  <div id="edit-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0"></div>
+    <div class="relative z-10 w-full max-w-md mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-xl font-bold">Editar Jugador</h4>
+        <button id="close-modal" class="text-slate-400 hover:text-white">
+          <span data-lucide="x"></span>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-slate-300 block mb-1">Nombre</label>
+          <input id="edit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
+        </div>
+
+        <div>
+          <label class="text-sm text-slate-300 block mb-1">Título / Rango</label>
+          <input id="edit-title" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button id="cancel-edit" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
+          <button id="save-edit" class="neon-btn px-4 py-2 rounded-xl">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar compra -->
+  <div id="shop-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0"></div>
+    <div class="relative z-10 w-full max-w-md mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
+      <div class="flex items-center justify-between mb-3">
+        <h4 id="shop-modal-name" class="text-xl font-bold">Confirmar compra</h4>
+        <button id="close-shop-modal" class="text-slate-400 hover:text-white">
+          <span data-lucide="x"></span>
+        </button>
+      </div>
+      <p id="shop-modal-desc" class="text-slate-300 text-sm mb-4"></p>
+      <div class="flex items-center justify-between text-sm mb-4">
+        <span class="text-slate-400">Costo</span>
+        <span id="shop-modal-price" class="gold-text font-bold"></span>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button id="shop-cancel" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
+        <button id="shop-confirm" class="neon-btn px-4 py-2 rounded-xl">Comprar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2"></div>
+
+  <script>
+    const STORAGE_KEY = 'solo_leveling_tracker_v2';
+    const DAILY_DEADLINE_HOURS = 24;
+    const DAILY_DEADLINE_MS = DAILY_DEADLINE_HOURS * 60 * 60 * 1000;
+    const CHECK_INTERVAL_MS = 60000;
+
+    const defaultState = {
+      player: {
+        name: 'Sung Jinwoo',
+        title: 'Cazador Rango E',
+        level: 1,
+        xp: 0,
+        gold: 120,
+        missedCount: 0,
+        lastDailyCompleted: null,
+        lastPenaltyAt: null,
+        attributes: {
+          strength: 1,
+          agility: 1,
+          vitality: 1,
+          intelligence: 1,
+          luck: 1
+        },
+        points: 3
+      },
+      settings: { notificationsEnabled: false },
+      inventory: [
+        { id: 'knife', name: 'Cuchilla de práctica', type: 'weapon', rarity: 'common', cost: 0, equipped: true, bonus: { strength: 1 } },
+        { id: 'sling', name: 'Malla ligera', type: 'armor', rarity: 'common', cost: 0, equipped: false, bonus: { vitality: 1 } }
+      ],
+      shop: [
+        { id: 'iron-sword', name: 'Espada de Hierro', type: 'weapon', rarity: 'rare', cost: 80, bonus: { strength: 3 }, desc: '+3 Fuerza' },
+        { id: 'shadow-vest', name: 'Chaleco Sombrío', type: 'armor', rarity: 'epic', cost: 110, bonus: { vitality: 3 }, desc: '+3 Vitalidad' },
+        { id: 'gloves-scout', name: 'Guantes de Explorador', type: 'utility', rarity: 'rare', cost: 90, bonus: { agility: 2 }, desc: '+2 Agilidad' },
+        { id: 'crystal-ring', name: 'Anillo de Cristal', type: 'utility', rarity: 'legendary', cost: 130, bonus: { luck: 2 }, desc: '+2 Suerte' }
+      ],
+      missions: [
+        { id: 'mission-1', title: 'Caza de ratas del sótano', xp: 40, gold: 20, cooldown: 3 * 60 * 60 * 1000, lastCompleted: null, description: 'Limpia el nivel inferior y gana experiencia rápida.', due: 'Diaria' },
+        { id: 'mission-2', title: 'Misión de extracción', xp: 60, gold: 25, cooldown: 6 * 60 * 60 * 1000, lastCompleted: null, description: 'Consigue recursos y devuelve sin pérdidas.', due: 'Diaria' },
+        { id: 'mission-3', title: 'Exploración del túnel', xp: 80, gold: 35, cooldown: 12 * 60 * 60 * 1000, lastCompleted: null, description: 'Recorre rutas ocultas para obtener botín de elite.', due: 'Diaria' }
+      ],
+      activity: [],
+      currentEvent: 'La red del sistema está estable.',
+      ranking: [
+        { label: 'Nivel actual', value: 1 },
+        { label: 'Faltas', value: 0 },
+        { label: 'Inventario', value: 2 },
+        { label: 'XP total', value: 0 }
+      ]
+    };
+
+    function clone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return deepMerge(defaultState, parsed);
+        }
+      } catch (err) {
+        console.warn('No se pudo cargar state', err);
+      }
+      return clone(defaultState);
+    }
+
+    function deepMerge(base, incoming) {
+      const result = clone(base);
+      for (const key in incoming) {
+        if (typeof incoming[key] === 'object' && incoming[key] !== null && !Array.isArray(incoming[key])) {
+          result[key] = deepMerge(result[key] || {}, incoming[key]);
+        } else {
+          result[key] = incoming[key];
+        }
+      }
+      return result;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function xpRequiredForLevel(level) {
+      return Math.floor(100 * Math.pow(1.28, level - 1));
+    }
+
+    function formatTime(ms) {
+      const totalMinutes = Math.max(0, Math.ceil(ms / 60000));
+      const h = Math.floor(totalMinutes / 60);
+      const m = totalMinutes % 60;
+      return `${h}h ${m}m`;
+    }
+
+    function pushActivity(text) {
+      state.activity.unshift({ text, time: Date.now() });
+      if (state.activity.length > 20) state.activity.pop();
+      saveState();
+      renderActivity();
+    }
+
+    function getEquippedBonus() {
+      const bonus = { strength: 0, agility: 0, vitality: 0, intelligence: 0, luck: 0 };
+      state.inventory.forEach(item => {
+        if (item.equipped && item.bonus) {
+          for (const key in item.bonus) bonus[key] = (bonus[key] || 0) + item.bonus[key];
+        }
+      });
+      return bonus;
+    }
+
+    function renderPlayerPanel() {
+      const { player } = state;
+      document.getElementById('player-name').textContent = player.name;
+      document.getElementById('player-title').textContent = player.title;
+      document.getElementById('player-level-badge').textContent = player.level;
+      document.getElementById('player-gold').textContent = player.gold;
+      document.getElementById('missed-count').textContent = player.missedCount || 0;
+
+      const required = xpRequiredForLevel(player.level);
+      const progress = Math.min(100, (player.xp / required) * 100);
+      document.getElementById('xp-text').textContent = `${player.xp} / ${required}`;
+      document.getElementById('xp-bar').style.width = `${progress}%`;
+
+      renderAttributes();
+      renderInventory();
+      renderRanking();
+    }
+
+    function renderAttributes() {
+      const { player } = state;
+      const bonus = getEquippedBonus();
+      const el = document.getElementById('attributes-panel');
+      const entries = [
+        ['strength', 'Fuerza'],
+        ['agility', 'Agilidad'],
+        ['vitality', 'Vitalidad'],
+        ['intelligence', 'Inteligencia'],
+        ['luck', 'Suerte']
+      ];
+
+      el.innerHTML = entries.map(([key, label]) => {
+        const base = player.attributes[key] || 0;
+        const total = base + (bonus[key] || 0);
+        return `
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <div class="flex justify-between text-slate-300"><span>${label}</span><span>${total}</span></div>
+              <div class="flex items-center gap-2 mt-1">
+                <button data-attr="${key}" data-action="minus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300 hover:border-cyan-400">-</button>
+                <div class="text-[10px] text-slate-400">Base ${base}</div>
+                <button data-attr="${key}" data-action="plus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300 hover:border-cyan-400">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Add points label
+      const pointsRow = document.createElement('div');
+      pointsRow.className = 'pt-2 mt-2 border-t border-slate-700 text-right text-xs text-cyan-200';
+      pointsRow.textContent = `Puntos disponibles: ${player.points}`;
+      el.appendChild(pointsRow);
+
+      document.querySelectorAll('[data-attr]').forEach(button => {
+        button.addEventListener('click', () => {
+          const attr = button.dataset.attr;
+          const action = button.dataset.action;
+          handleAttributeAction(attr, action);
+        });
+      });
+    }
+
+    function handleAttributeAction(attr, action) {
+      const { player } = state;
+      if (action === 'plus' && player.points > 0) {
+        player.attributes[attr] = (player.attributes[attr] || 0) + 1;
+        player.points -= 1;
+        pushActivity(`[Atributo] +1 ${attr}`);
+      }
+      if (action === 'minus' && (player.attributes[attr] || 0) > 1) {
+        player.attributes[attr] -= 1;
+        player.points += 1;
+        pushActivity(`[Atributo] -1 ${attr}`);
+      }
+      saveState();
+      renderPlayerPanel();
+    }
+
+    function renderMissions() {
+      const container = document.getElementById('missions-container');
+      container.innerHTML = state.missions.map(mission => {
+        const isReady = !mission.lastCompleted || Date.now() - mission.lastCompleted >= mission.cooldown;
+        const remaining = mission.lastCompleted ? Math.max(0, mission.cooldown - (Date.now() - mission.lastCompleted)) : 0;
+
+        return `
+          <div class="item-card ${isReady ? 'border-cyan-500/30' : 'opacity-70'}">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-semibold">${mission.title}</h4>
+                  <span class="badge">${mission.due}</span>
+                </div>
+                <p class="text-sm text-slate-400 mt-1">${mission.description}</p>
+              </div>
+              <div class="text-right text-xs text-slate-300">
+                <div class="gold-text">+${mission.gold} Oro</div>
+                <div class="text-cyan-200">+${mission.xp} XP</div>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center justify-between gap-4">
+              <div class="text-xs text-slate-400">
+                ${isReady ? 'Lista para reclamar' : `Recarga en ${formatTime(remaining)}`}
+              </div>
+              <button data-mission-id="${mission.id}" class="mission-btn neon-btn px-3 py-1.5 rounded-lg text-sm ${isReady ? '' : 'opacity-50 cursor-not-allowed'}" ${isReady ? '' : 'disabled'}>
+                ${isReady ? 'Completar' : 'En espera'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.mission-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.dataset.missionId;
+          completeMission(id);
+        });
+      });
+    }
+
+    function completeMission(missionId) {
+      const mission = state.missions.find(item => item.id === missionId);
+      if (!mission) return;
+      const now = Date.now();
+      if (mission.lastCompleted && now - mission.lastCompleted < mission.cooldown) {
+        showToast('Misión en recarga', 'Debes esperar a que termine el cooldown.');
+        return;
+      }
+
+      state.player.xp += mission.xp;
+      state.player.gold += mission.gold;
+      mission.lastCompleted = now;
+      state.player.lastDailyCompleted = now;
+      state.player.missedCount = 0;
+
+      while (state.player.xp >= xpRequiredForLevel(state.player.level)) {
+        state.player.xp -= xpRequiredForLevel(state.player.level);
+        state.player.level += 1;
+        state.player.points += 1;
+        sendSystemNotification('[SISTEMA]: ¡LEVEL UP!', `Has alcanzado el Nivel ${state.player.level}. Puntos de atributo disponibles.`);
+        pushActivity(`[Nivel] Has subido al nivel ${state.player.level}.`);
+      }
+
+      saveState();
+      renderPlayerPanel();
+      renderMissions();
+      pushActivity(`[Misión] ${mission.title} completada. +${mission.xp} XP, +${mission.gold} Oro.`);
+      sendSystemNotification('[SISTEMA]: Misión Cumplida', `+${mission.xp} XP y +${mission.gold} Oro agregados.`);
+      showToast('Misión completada', `${mission.title} hecha con éxito.`);
+    }
+
+    function renderInventory() {
+      const container = document.getElementById('inventory-container');
+      const countEl = document.getElementById('inventory-count');
+      const items = state.inventory;
+      countEl.textContent = `${items.length} / ${items.length}`;
+      container.innerHTML = items.length ? items.map(item => `
+        <div class="item-card ${item.equipped ? 'border-cyan-500/50' : ''}">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <div class="font-medium">${item.name}</div>
+              <div class="text-xs text-slate-400">${item.type} • ${item.rarity}</div>
+            </div>
+            <button data-item-id="${item.id}" class="equip-btn neon-outline px-2 py-1 rounded-lg text-xs">
+              ${item.equipped ? 'Equipado' : 'Equipar'}
+            </button>
+          </div>
+        </div>
+      `).join('') : '<div class="text-sm text-slate-400">Sin objetos en el inventario.</div>';
+
+      document.querySelectorAll('.equip-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const itemId = button.dataset.itemId;
+          equipItem(itemId);
+        });
+      });
+    }
+
+    function equipItem(itemId) {
+      state.inventory = state.inventory.map(item => {
+        if (item.id === itemId) {
+          item.equipped = !item.equipped;
+        } else if (item.type === state.inventory.find(i => i.id === itemId)?.type) {
+          item.equipped = false;
+        }
+        return item;
+      });
+      saveState();
+      renderPlayerPanel();
+      pushActivity(`[Inventario] ${itemId} actualizado.`);
+    }
+
+    function renderShop() {
+      const container = document.getElementById('shop-container');
+      container.innerHTML = state.shop.map(item => `
+        <div class="item-card">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="font-medium">${item.name}</div>
+              <div class="text-[10px] uppercase tracking-[0.18em] text-slate-400">${item.rarity}</div>
+            </div>
+            <div class="gold-text text-sm font-semibold">${item.cost} oro</div>
+          </div>
+          <div class="text-xs text-slate-300 mt-2">${item.desc}</div>
+          <button data-shop-item="${item.id}" class="buy-btn neon-btn w-full mt-3 py-2 rounded-lg text-sm">Comprar</button>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.buy-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const itemId = button.dataset.shopItem;
+          openShopModal(itemId);
+        });
+      });
+    }
+
+    function openShopModal(itemId) {
+      const item = state.shop.find(entry => entry.id === itemId);
+      if (!item) return;
+      state.pendingPurchaseId = itemId;
+
+      document.getElementById('shop-modal-name').textContent = item.name;
+      document.getElementById('shop-modal-desc').textContent = item.desc;
+      document.getElementById('shop-modal-price').textContent = `${item.cost} Oro`;
+      document.getElementById('shop-modal').classList.remove('hidden');
+      document.getElementById('shop-modal').classList.add('flex');
+    }
+
+    function closeShopModal() {
+      document.getElementById('shop-modal').classList.remove('flex');
+      document.getElementById('shop-modal').classList.add('hidden');
+      state.pendingPurchaseId = null;
+    }
+
+    document.getElementById('shop-confirm').addEventListener('click', () => {
+      const itemId = state.pendingPurchaseId;
+      const item = state.shop.find(entry => entry.id === itemId);
+      if (!item) return closeShopModal();
+      if (state.player.gold < item.cost) {
+        showToast('Fondos insuficientes', 'Te falta oro para comprar este ítem.');
+        closeShopModal();
+        return;
+      }
+
+      state.player.gold -= item.cost;
+      state.inventory.push({
+        id: item.id + '-' + Date.now(),
+        name: item.name,
+        type: item.type,
+        rarity: item.rarity,
+        cost: item.cost,
+        equipped: false,
+        bonus: item.bonus,
+        desc: item.desc
+      });
+      saveState();
+      renderPlayerPanel();
+      renderShop();
+      closeShopModal();
+      pushActivity(`[Tienda] ${item.name} adquirido con éxito.`);
+      sendSystemNotification('[SISTEMA]: Ítem adquirido con éxito.', `${item.name} añadido a tu inventario.`);
+      showToast('Compra exitosa', `${item.name} adquirido.`);
+    });
+
+    document.getElementById('shop-cancel').addEventListener('click', closeShopModal);
+    document.getElementById('close-shop-modal').addEventListener('click', closeShopModal);
+
+    function renderActivity() {
+      const log = document.getElementById('activity-log');
+      if (!state.activity.length) {
+        log.innerHTML = '<div class="text-sm text-slate-400">Sin actividad registrada todavía.</div>';
+        return;
+      }
+
+      log.innerHTML = state.activity.map(event => `
+        <div class="rounded-xl border border-slate-700 bg-slate-900/30 p-2">
+          <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500">${new Date(event.time).toLocaleTimeString()}</div>
+          <div class="text-sm text-slate-200 mt-1">${event.text}</div>
+        </div>
+      `).join('');
+
+      const last = state.player.lastDailyCompleted;
+      document.getElementById('last-daily').textContent = last ? `Última misión: ${new Date(last).toLocaleString()}` : 'Última misión: nunca';
+    }
+
+    function renderRanking() {
+      const rank = document.getElementById('ranking-card');
+      const totalXp = state.missions.reduce((sum, mission) => sum + (mission.lastCompleted ? mission.xp : 0), 0) + state.player.xp;
+      const values = [
+        { label: 'Nivel', value: state.player.level },
+        { label: 'Rango', value: state.player.title },
+        { label: 'Faltas', value: state.player.missedCount || 0 },
+        { label: 'XP total', value: totalXp }
+      ];
+      rank.innerHTML = values.map(item => `
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">${item.label}</span>
+          <span class="font-semibold text-cyan-200">${item.value}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderEventCard() {
+      const eventCard = document.getElementById('event-card');
+      const random = [
+        'La frontera del dungeon pulsa con energía oscura.',
+        'Un cazador rival ha dejado un rastro de botín en el páramo.',
+        'Un portal inestable ha liberado una ola de monstruos de rango medio.',
+        'La misión del día ofrece una recompensa de oro extra por lograr el objetivo esta noche.',
+        'Tu sistema detecta que la ciudad está bajo vigilancia del gremio.'
+      ];
+      const idx = Math.floor(Math.random() * random.length);
+      state.currentEvent = random[idx];
+      eventCard.textContent = state.currentEvent;
+    }
+
+    function generateEvent() {
+      const events = [
+        'Evento: Caza de monstruos de rango B. Recompensa: +70 XP, +20 Oro.',
+        'Evento: Protección del convoy. Recompensa: +80 XP, +40 Oro.',
+        'Evento: Expansión del dungeon. Recompensa: +90 XP, +30 Oro.',
+        'Evento: Desafío de velocidad. Recompensa: +60 XP, +25 Oro.',
+        'Evento: Misión del gremio. Recompensa: +100 XP, +50 Oro.'
+      ];
+      const message = events[Math.floor(Math.random() * events.length)];
+      state.currentEvent = message;
+      document.getElementById('event-card').textContent = message;
+      pushActivity(`[Evento] ${message}`);
+      showToast('Evento del sistema', message);
+    }
+
+    document.getElementById('refresh-missions').addEventListener('click', generateEvent);
+
+    function applyMissPenalty() {
+      const { player } = state;
+      const now = Date.now();
+      const last = player.lastDailyCompleted || 0;
+      if (!last || now - last > DAILY_DEADLINE_MS) {
+        const penaltyGold = 25 + (player.missedCount * 10);
+        const penaltyXp = 30 + (player.missedCount * 15);
+
+        player.gold = Math.max(0, player.gold - penaltyGold);
+        player.xp = Math.max(0, player.xp - penaltyXp);
+        player.missedCount = (player.missedCount || 0) + 1;
+        player.lastPenaltyAt = now;
+
+        if (player.missedCount >= 3) {
+          player.level = Math.max(1, player.level - 1);
+          player.points += 1;
+          player.missedCount = 0;
+          sendSystemNotification('[SISTEMA]: Sanción grave', `Nivel reducido por faltas repetidas.`);
+          pushActivity('[Sistema] Sanción grave aplicada: nivel reducido por faltas repetidas.');
+        } else {
+          sendSystemNotification('[SISTEMA]: Tienes Misiones Diarias pendientes', `Se han aplicado sanciones por faltas. -${penaltyGold} Oro y -${penaltyXp} XP.`);
+          pushActivity(`[Sistema] Misión diaria perdida. Sanción: -${penaltyGold} Oro, -${penaltyXp} XP.`);
+        }
+
+        saveState();
+        renderPlayerPanel();
+        renderMissions();
+      }
+    }
+
+    function checkDailyMissions() {
+      const outstanding = state.missions.some(mission => !mission.lastCompleted || (Date.now() - mission.lastCompleted > mission.cooldown));
+      if (outstanding) {
+        applyMissPenalty();
+      }
+    }
+
+    setInterval(() => {
+      checkDailyMissions();
+      renderMissions();
+      renderEventCard();
+    }, CHECK_INTERVAL_MS);
+
+    function showToast(title, body, duration = 3500) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast rounded-xl p-3 shadow-2xl';
+      toast.innerHTML = `
+        <div class="font-semibold text-sm">${title}</div>
+        <div class="text-xs text-slate-300 mt-1">${body}</div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, duration);
+    }
+
+    function sendSystemNotification(title, body) {
+      if (!('Notification' in window)) {
+        showToast(title, body);
+        return;
+      }
+      if (Notification.permission === 'granted') {
+        try {
+          new Notification(title, { body, tag: 'sl-tracker' });
+        } catch (err) {
+          showToast(title, body);
+        }
+      } else {
+        showToast(title, body);
+      }
+    }
+
+    const notifBtn = document.getElementById('notif-btn');
+    const notifStatus = document.getElementById('notif-status');
+
+    function updateNotificationUI() {
+      if (!('Notification' in window)) {
+        notifBtn.classList.add('opacity-60', 'cursor-not-allowed');
+        notifBtn.innerHTML = '<span data-lucide="bell-off"></span> [SISTEMA: NO SOPORTADO]';
+        notifStatus.textContent = 'No soportado';
+        lucide.createIcons();
+        return;
+      }
+
+      const permission = Notification.permission;
+      if (permission === 'granted') {
+        notifBtn.innerHTML = '<span data-lucide="check-circle"></span> [SISTEMA: NOTIFICACIONES ACTIVAS]';
+        notifBtn.classList.add('pulse');
+        notifStatus.textContent = 'Granted';
+      } else if (permission === 'denied') {
+        notifBtn.innerHTML = '<span data-lucide="slash"></span> [SISTEMA: DENEGADAS]';
+        notifBtn.classList.remove('pulse');
+        notifStatus.textContent = 'Denied';
+      } else {
+        notifBtn.innerHTML = '<span data-lucide="bell"></span> [SISTEMA: ACTIVAR NOTIFICACIONES]';
+        notifBtn.classList.remove('pulse');
+        notifStatus.textContent = 'Default';
+      }
+      lucide.createIcons();
+    }
+
+    notifBtn.addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        showToast('Notificaciones', 'El navegador no soporta Web Notifications.');
+        return;
+      }
+      const result = await Notification.requestPermission();
+      state.settings.notificationsEnabled = result === 'granted';
+      saveState();
+      updateNotificationUI();
+      if (result === 'granted') {
+        sendSystemNotification('[SISTEMA]: Notificaciones activadas', 'Recibirás alertas del sistema.');
+        pushActivity('[Sistema] Permiso de notificaciones concedido.');
+      }
+    });
+
+    document.getElementById('edit-player-btn').addEventListener('click', () => {
+      const nameInput = document.getElementById('edit-name');
+      const titleInput = document.getElementById('edit-title');
+      nameInput.value = state.player.name;
+      titleInput.value = state.player.title;
+      document.getElementById('edit-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('close-modal').addEventListener('click', () => {
+      document.getElementById('edit-modal').classList.add('hidden');
+    });
+
+    document.getElementById('cancel-edit').addEventListener('click', () => {
+      document.getElementById('edit-modal').classList.add('hidden');
+    });
+
+    document.getElementById('save-edit').addEventListener('click', () => {
+      const name = document.getElementById('edit-name').value.trim() || 'Anónimo';
+      const title = document.getElementById('edit-title').value.trim() || 'Cazador';
+      state.player.name = name;
+      state.player.title = title;
+      saveState();
+      renderPlayerPanel();
+      renderMissions();
+      pushActivity(`[Jugador] Nombre actualizado: ${name} / ${title}`);
+      document.getElementById('edit-modal').classList.add('hidden');
+      showToast('Guardado', 'Nombre y título actualizados.');
+    });
+
+    // PWA install prompt
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installButton = document.createElement('button');
+      installButton.className = 'fixed bottom-6 left-6 z-50 neon-btn px-4 py-2 rounded-xl text-sm';
+      installButton.textContent = 'Instalar App';
+      installButton.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installButton.remove();
+      });
+      document.body.appendChild(installButton);
+    });
+
+    function init() {
+      renderPlayerPanel();
+      renderMissions();
+      renderShop();
+      renderEventCard();
+      renderActivity();
+      updateNotificationUI();
+      lucide.createIcons();
+      document.getElementById('edit-modal').classList.add('hidden');
+      document.getElementById('shop-modal').classList.add('hidden');
+      checkDailyMissions();
+    }
+
+    init();
+  </script>
+</body>
+</html>
