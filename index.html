@@ -4,192 +4,709 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#071021" />
-  <title>S.L.traker — Solo Leveling: Inicios</title>
+  <title>S.L.traker — Solo Leveling Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
   <style>
-    :root{--bg:#071021;--neon:#00f0ff;--muted:#8ea4b8;--gold:#f8c857;--danger:#ff6b6b}
-    html,body{min-height:100%;background:linear-gradient(180deg,#020817 0%,#071021 60%);color:#def9ff;font-family:Inter,system-ui,Arial}
-    body{padding:24px}
-    .glass{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.05);backdrop-filter:blur(5px)}
-    .neon-btn{background:linear-gradient(90deg,rgba(0,240,255,0.12),rgba(0,240,255,0.05));border:1px solid rgba(0,240,255,0.25);color:var(--neon);box-shadow:inset 0 0 8px rgba(0,240,255,0.08)}
-    .neon-outline{border:1px solid rgba(0,240,255,0.22);color:var(--neon);background:rgba(0,240,255,0.02)}
-    .badge{display:inline-flex;padding:0.2rem 0.55rem;border-radius:999px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03)}
-    .progress{height:12px;background:rgba(255,255,255,0.06);border-radius:999px}
-    .progress-bar{height:100%;background:linear-gradient(90deg,var(--neon),#62f3ff);transition:width .25s}
-    .item-card{border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);border-radius:.75rem;padding:.8rem}
-    .toast{background:rgba(5,10,18,0.92);border:1px solid rgba(0,240,255,0.08);color:#def9ff;padding:.6rem;border-radius:.5rem}
+    :root {
+      --bg: #071021;
+      --panel: rgba(9, 17, 29, 0.82);
+      --muted: #8ea4b8;
+      --neon: #00f0ff;
+      --gold: #f8c857;
+      --danger: #ff6b6b;
+      --green: #6ee7a5;
+      --purple: #a78bfa;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(circle at top, rgba(0,240,255,0.08), transparent 30%), linear-gradient(180deg, #020817 0%, #071021 60%);
+      color: #eafcff;
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    body { padding: 24px; }
+
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 16px rgba(0,240,255,0.06);
+      backdrop-filter: blur(5px);
+    }
+
+    .panel-title {
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .neon-btn {
+      background: linear-gradient(90deg, rgba(0,240,255,0.12), rgba(0,240,255,0.04));
+      border: 1px solid rgba(0,240,255,0.25);
+      color: var(--neon);
+      box-shadow: inset 0 0 8px rgba(0,240,255,0.08), 0 0 10px rgba(0,240,255,0.12);
+      text-shadow: 0 0 12px rgba(0,240,255,0.22);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .neon-btn:hover { transform: translateY(-1px); box-shadow: inset 0 0 10px rgba(0,240,255,0.12), 0 0 18px rgba(0,240,255,0.2); }
+    .neon-outline { border: 1px solid rgba(0,240,255,0.22); color: var(--neon); background: rgba(0,240,255,0.02); }
+    .badge { display:inline-flex; align-items:center; border-radius:999px; padding:0.2rem 0.55rem; font-size:0.68rem; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); }
+    .item-card { border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); border-radius:0.75rem; padding:0.8rem; }
+    .progress { height: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); overflow:hidden; border-radius:999px; }
+    .progress-bar { height:100%; background: linear-gradient(90deg, var(--neon), #62f3ff 70%, #d3ffff); box-shadow: 0 0 12px rgba(0,240,255,0.4); border-radius:inherit; transition: width 0.25s ease; }
+    .gold-text { color: var(--gold); }
+    .danger-text { color: var(--danger); }
+    .green-text { color: var(--green); }
+    .purple-text { color: var(--purple); }
+    .toast { background: rgba(5,10,18,0.94); border: 1px solid rgba(0,240,255,0.12); color: #def9ff; min-width: 220px; max-width: 360px; }
+    .modal-backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+    .pulse { animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 rgba(0,240,255,0.12); } 50% { box-shadow: 0 0 20px rgba(0,240,255,0.18); } }
+    .range-chip { display:inline-flex; align-items:center; border:1px solid rgba(0,240,255,0.16); background:rgba(0,240,255,0.04); color:var(--neon); border-radius:999px; padding:0.22rem 0.55rem; font-size:0.68rem; }
+    .mission-difficulty.easy { border-color: rgba(110,231,165,0.25); }
+    .mission-difficulty.normal { border-color: rgba(0,240,255,0.26); }
+    .mission-difficulty.hard { border-color: rgba(248,200,87,0.28); }
+    .mission-difficulty.extreme { border-color: rgba(255,107,107,0.28); }
+    .story-line { color: #dfeeff; }
   </style>
 </head>
 <body>
-  <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-6">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-12 gap-6">
     <aside class="md:col-span-3 glass rounded-2xl p-5">
       <div class="flex items-center gap-4">
-        <div style="width:72px;height:72px;border-radius:50%;background:radial-gradient(circle,#002 0,#0000 60%);display:grid;place-items:center;border:1px solid rgba(0,240,255,0.12)">
-          <div class="text-center"><div class="text-xs text-slate-400">Lvl</div><div id="player-level" class="text-2xl font-bold">1</div></div>
+        <div style="width:88px;height:88px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle, rgba(0,240,255,0.12), rgba(0,0,0,0) 60%); border:1px solid rgba(0,240,255,0.2); box-shadow: inset 0 0 12px rgba(0,240,255,0.12);">
+          <div class="text-center">
+            <div class="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Lvl</div>
+            <div id="player-level" class="text-2xl font-bold text-cyan-200">1</div>
+          </div>
         </div>
-        <div>
-          <div class="text-xs text-slate-400">Jugador</div>
-          <div class="flex items-center gap-2"><h2 id="player-name" class="text-lg font-bold">Sung Jinwoo</h2><span id="player-title" class="badge">Cazador Rango E</span></div>
+        <div class="min-w-0">
+          <div class="panel-title">Jugador</div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 id="player-name" class="text-2xl font-bold truncate">Sung Jinwoo</h2>
+            <span id="player-title" class="badge">Cazador Rango E</span>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4">
-        <div class="text-xs text-slate-400 flex justify-between"><span>XP</span><span id="xp-text">0 / 100</span></div>
-        <div class="progress mt-2"><div id="xp-bar" class="progress-bar" style="width:0%"></div></div>
+      <div class="mt-5 space-y-3">
+        <div class="item-card">
+          <div class="flex justify-between text-xs text-slate-300"><span>XP</span><span id="xp-text">0 / 100</span></div>
+          <div class="progress mt-2"><div id="xp-bar" class="progress-bar" style="width: 0%"></div></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="item-card">
+            <div class="text-slate-400">Oro</div>
+            <div id="player-gold" class="text-xl font-semibold text-yellow-300">120</div>
+          </div>
+          <div class="item-card">
+            <div class="text-slate-400">Faltas</div>
+            <div id="player-missed" class="text-xl font-semibold text-red-300">0</div>
+          </div>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-        <div class="item-card"><div class="text-slate-400">Oro</div><div id="player-gold" class="text-yellow-300 font-semibold">120</div></div>
-        <div class="item-card"><div class="text-slate-400">Faltas</div><div id="player-missed" class="text-red-300 font-semibold">0</div></div>
+      <div class="mt-5 space-y-3">
+        <button id="edit-player-btn" class="neon-btn w-full py-2.5 rounded-xl flex items-center justify-center gap-2"><span data-lucide="edit-3"></span> Editar Nombre / Título</button>
+        <button id="notif-btn" class="neon-outline w-full py-2.5 rounded-xl flex items-center justify-center gap-2"><span data-lucide="bell"></span> [SISTEMA: ACTIVAR NOTIFICACIONES]</button>
+        <div class="text-xs text-slate-400 text-center">Estado: <span id="notif-status">Default</span></div>
       </div>
 
-      <div class="mt-4 space-y-2">
-        <button id="edit-btn" class="neon-btn w-full py-2 rounded-lg">Editar Nombre / Título</button>
-        <button id="notif-btn" class="neon-outline w-full py-2 rounded-lg">[SISTEMA: ACTIVAR NOTIFICACIONES]</button>
-        <div class="text-xs text-slate-400">Privado: notifs locales</div>
+      <div class="mt-6 item-card">
+        <div class="panel-title mb-2">Atributos</div>
+        <div id="attributes-panel" class="space-y-2 text-sm"></div>
       </div>
 
-      <div class="mt-4 item-card">
-        <div class="text-xs text-slate-400">Clase</div>
-        <select id="class-select" class="w-full mt-2 bg-transparent border border-slate-700 p-2 rounded">
-          <option value="hunter">Cazador</option>
-          <option value="scout">Explorador</option>
-          <option value="guardian">Guardián</option>
-          <option value="mage">Mago</option>
-        </select>
+      <div class="mt-6 item-card">
+        <div class="panel-title mb-2">Rango</div>
+        <div id="range-panel" class="flex items-center justify-between gap-2"></div>
       </div>
     </aside>
 
     <main class="md:col-span-6 space-y-6">
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">Misiones (Quests)</h3><span class="badge">Serie I — Inicios</span></div>
-        <div id="missions" class="space-y-3"></div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Misiones</h3>
+          <span id="mission-count" class="badge">0 misiones</span>
+        </div>
+        <div id="missions-container" class="space-y-3"></div>
       </section>
 
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">Contratos (Riesgo / Recompensa)</h3><span class="badge">Opcional</span></div>
-        <div id="contracts" class="space-y-3"></div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Contratos</h3>
+          <span class="badge">Riesgo / Recompensa</span>
+        </div>
+        <div id="contracts-container" class="space-y-3"></div>
       </section>
 
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">Tienda</h3><span class="badge">Mejora tu viaje</span></div>
-        <div id="shop" class="space-y-3"></div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xl font-bold">Historia del cazador</h3>
+          <span class="badge">Lore</span>
+        </div>
+        <div id="story-line" class="story-line item-card">El camino apenas comienza.</div>
+      </section>
+
+      <section class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xl font-bold">Registro de actividad</h3>
+          <span id="last-action" class="text-xs text-slate-400">Última acción: nunca</span>
+        </div>
+        <div id="activity-log" class="space-y-2"></div>
       </section>
     </main>
 
     <aside class="md:col-span-3 space-y-6">
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">Logros</h3><span id="ach-count" class="badge">0/0</span></div>
-        <div id="achievements" class="space-y-2"></div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Tienda</h3>
+          <span class="badge">Arsenal</span>
+        </div>
+        <div id="shop-container" class="space-y-3"></div>
       </section>
 
       <section class="glass rounded-2xl p-5">
-        <div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">Registro</h3><span class="badge">Últimas</span></div>
-        <div id="log" class="scroll-panel space-y-2"></div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold">Logros</h3>
+          <span id="achievement-count" class="badge">0 / 0</span>
+        </div>
+        <div id="achievement-container" class="space-y-2"></div>
       </section>
     </aside>
   </div>
 
-  <!-- Edit modal -->
-  <div id="modal-edit" class="fixed inset-0 hidden items-center justify-center z-50"><div class="absolute inset-0" style="background:rgba(0,0,0,0.6)"></div>
-    <div class="relative z-10 w-full max-w-md p-5 rounded bg-[#081421] glass">
-      <div class="flex justify-between items-center mb-3"><h4 class="font-bold">Editar Jugador</h4><button id="close-edit" class="text-slate-400"><span data-lucide="x"></span></button></div>
-      <div class="space-y-3"><input id="name-input" class="w-full p-2 bg-transparent border rounded" placeholder="Nombre"/><input id="title-input" class="w-full p-2 bg-transparent border rounded" placeholder="Título"/><div class="flex justify-end gap-2"><button id="cancel-edit" class="neon-outline px-3 py-1 rounded">Cancelar</button><button id="save-edit" class="neon-btn px-3 py-1 rounded">Guardar</button></div></div>
+  <div id="edit-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="modal-backdrop absolute inset-0"></div>
+    <div class="relative z-10 w-full max-w-md mx-4 rounded-2xl bg-[#081421] border border-cyan-500/20 shadow-2xl p-5 glass">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="text-xl font-bold">Editar Jugador</h4>
+        <button id="close-edit-modal" class="text-slate-400 hover:text-white"><span data-lucide="x"></span></button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-slate-300 block mb-1">Nombre</label>
+          <input id="edit-name" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
+        </div>
+        <div>
+          <label class="text-sm text-slate-300 block mb-1">Título / Rango</label>
+          <input id="edit-title" type="text" class="w-full rounded-xl bg-transparent border border-slate-700 px-3 py-2 text-white focus:outline-none focus:border-cyan-400" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button id="cancel-edit" class="neon-outline px-4 py-2 rounded-xl">Cancelar</button>
+          <button id="save-edit" class="neon-btn px-4 py-2 rounded-xl">Guardar</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="toast-area" class="fixed bottom-6 right-6 space-y-2 z-50"></div>
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2"></div>
 
   <script>
     const STORAGE_KEY = 'solo_leveling_state';
+    const RANGES = [
+      { min: 1, name: 'E', label: 'Rango E' },
+      { min: 2, name: 'D', label: 'Rango D' },
+      { min: 4, name: 'C', label: 'Rango C' },
+      { min: 7, name: 'B', label: 'Rango B' },
+      { min: 10, name: 'A', label: 'Rango A' },
+      { min: 13, name: 'S', label: 'Rango S' }
+    ];
 
     const defaultState = {
-      player:{name:'Sung Jinwoo',title:'Cazador Rango E',level:1,xp:0,gold:120,missed:0,class:'hunter'},
-      missions:[
-        { id:'m1',title:'Entrenamiento básico',desc:'30 min de cardio ligero',xp:30,gold:10,completed:false,available:true,risk:0 },
-        { id:'m2',title:'Prueba de fuerza',desc:'3 series de levantamiento',xp:60,gold:30,completed:false,available:true,risk:10 },
-        { id:'m3',title:'Desafío vigor',desc:'HIIT 20 min (riesgoso)',xp:110,gold:60,completed:false,available:true,risk:25 }
+      player: {
+        name: 'Sung Jinwoo',
+        title: 'Cazador Rango E',
+        level: 1,
+        xp: 0,
+        gold: 120,
+        missed: 0,
+        class: 'hunter',
+        attributes: { strength: 1, agility: 1, vitality: 1, intelligence: 1, luck: 1 },
+        points: 3,
+        lastAction: null
+      },
+      missions: [
+        { id: 'cardio-1', title: 'Trote de arranque', description: '30 min de cardio ligero', difficulty: 'easy', minLevel: 1, xp: 30, gold: 10, risk: 12, completions: 0 },
+        { id: 'lift-1', title: 'Prueba de fuerza', description: 'Rutina de fuerza base', difficulty: 'normal', minLevel: 2, xp: 55, gold: 25, risk: 18, completions: 0 },
+        { id: 'hiit-1', title: 'Reto de intensidad', description: 'HIIT de alto esfuerzo', difficulty: 'hard', minLevel: 3, xp: 90, gold: 45, risk: 28, completions: 0 },
+        { id: 'endurance-1', title: 'Mármol de resistencia', description: 'Entrenamiento prolongado y exigente', difficulty: 'extreme', minLevel: 5, xp: 140, gold: 70, risk: 38, completions: 0 }
       ],
-      contracts:[
-        { id:'c1',title:'Contrato menor',desc:'+50% XP si completas, pierdes 15 oro si fallas', rewardXp:0.5,rewardGold:0,riskGold:15,accepted:false },
-        { id:'c2',title:'Contrato arriesgado',desc:'+120% XP y +30 oro, fallar quita 40 XP', rewardXp:1.2,rewardGold:30,riskXp:40,accepted:false }
+      contracts: [
+        { id: 'contract-1', title: 'Contrato sencillo', description: '+50% XP, falla = -10 oro', multiplier: 1.5, penaltyGold: 10, accepted: false },
+        { id: 'contract-2', title: 'Contrato arriesgado', description: '+120% XP, falla = -35 XP', multiplier: 2.2, penaltyXp: 35, accepted: false }
       ],
-      shop:[{id:'s1',name:'Poción de XP',desc:'+50 XP inmediato',cost:80,apply:{xp:50}},{id:'s2',name:'Ticket de caja',desc:'Abre una caja de botín',cost:40,apply:{loot:true}}],
-      achievements:[{id:'a1',title:'Primer paso',desc:'Completa tu primera misión',done:false},{id:'a2',title:'Riesgo calculado',desc:'Completa un contrato arriesgado',done:false}],
-      logs:[]
+      shop: [
+        { id: 'potion-xp', name: 'Poción de XP', rarity: 'común', cost: 80, desc: '+50 XP inmediato', type: 'xp', amount: 50 },
+        { id: 'bone-boost', name: 'Hueso de impulso', rarity: 'raro', cost: 120, desc: '+2 Fuerza permanente', type: 'stat', stat: 'strength', amount: 2 },
+        { id: 'sprint-gear', name: 'Equipo de sprint', rarity: 'épico', cost: 180, desc: '+2 Agilidad permanente', type: 'stat', stat: 'agility', amount: 2 },
+        { id: 'shadow-ring', name: 'Anillo de la sombra', rarity: 'legendario', cost: 260, desc: '+2 Suerte permanente', type: 'stat', stat: 'luck', amount: 2 }
+      ],
+      achievements: [
+        { id: 'first-win', title: 'Primer paso', description: 'Completa tu primera misión', done: false },
+        { id: 'streak-3', title: 'Racha 3', description: 'Completa 3 misiones seguidas', done: false },
+        { id: 'rango-d', title: 'Rango D', description: 'Alcanza el Rango D', done: false },
+        { id: 'hard-clear', title: 'Cazador endurecido', description: 'Completa una misión difícil', done: false }
+      ],
+      settings: { notificationsEnabled: false },
+      activity: [],
+      story: {
+        E: 'El cazador aún se está abriendo camino. Cada misión es una prueba de voluntad.',
+        D: 'La sombra ya reconoce su fuerza. El nombre empieza a resonar en el reino.',
+        C: 'Los límites se expanden. El camino ya no es solo entrenamiento, es evolución.',
+        B: 'Hay un pulso en la sangre. El cazador ya no es un novato.',
+        A: 'La presión del mundo se vuelve clara. El paso siguiente es brutal.',
+        S: 'El cazador ha cruzado la puerta. La sensación de poder ya es innegable.'
+      }
     };
 
-    function load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) { const parsed = JSON.parse(raw); return {...defaultState,...parsed}; } }catch(e){console.warn('load',e);} return JSON.parse(JSON.stringify(defaultState)); }
-    let state = load();
-    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return deepMerge(clone(defaultState), parsed);
+        }
+      } catch (e) {
+        console.warn('Error loading state:', e);
+      }
+      return clone(defaultState);
+    }
 
-    function showToast(title,txt,ms=3000){ const area=document.getElementById('toast-area'); const t=document.createElement('div'); t.className='toast'; t.innerHTML=`<div class="font-semibold">${title}</div><div class="text-xs text-slate-300">${txt}</div>`; area.appendChild(t); setTimeout(()=>t.remove(),ms); }
-    function pushLog(text){ state.logs.unshift({text,time:Date.now()}); if(state.logs.length>30) state.logs.pop(); save(); renderLogs(); }
+    function deepMerge(base, incoming) {
+      for (const key in incoming) {
+        if (incoming[key] && typeof incoming[key] === 'object' && !Array.isArray(incoming[key])) {
+          base[key] = deepMerge(base[key] || {}, incoming[key]);
+        } else {
+          base[key] = incoming[key];
+        }
+      }
+      return base;
+    }
 
-    function renderPlayer(){ document.getElementById('player-name').textContent=state.player.name; document.getElementById('player-title').textContent=state.player.title; document.getElementById('player-level').textContent=state.player.level; document.getElementById('player-gold').textContent=state.player.gold; document.getElementById('player-missed').textContent=state.player.missed; const req = xpReq(state.player.level); document.getElementById('xp-text').textContent=`${state.player.xp} / ${req}`; document.getElementById('xp-bar').style.width=Math.min(100,(state.player.xp/req)*100)+'%'; document.getElementById('class-select').value=state.player.class; }
+    let state = loadState();
 
-    function xpReq(l){ return Math.floor(100 * Math.pow(1.25, Math.max(0,l-1))); }
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
 
-    function renderMissions(){ const el=document.getElementById('missions'); el.innerHTML = state.missions.map(m=>`<div class="item-card"><div class="flex justify-between"><div><div class="font-semibold">${m.title}</div><div class="text-xs text-slate-400">${m.desc}</div></div><div class="text-right"><div class="text-cyan-200">+${m.xp} XP</div><div class="text-yellow-300">+${m.gold} Oro</div><div class="text-xs text-slate-400">Riesgo ${m.risk}%</div></div></div><div class="mt-3 flex gap-2"><button data-id="${m.id}" class="do-mission neon-btn px-3 py-1 rounded">Realizar</button><button data-id="${m.id}" class="skip-mission neon-outline px-3 py-1 rounded">Saltar</button></div></div>`).join(''); document.querySelectorAll('.do-mission').forEach(b=>b.addEventListener('click',e=>attemptMission(e.target.dataset.id))); document.querySelectorAll('.skip-mission').forEach(b=>b.addEventListener('click',e=>skipMission(e.target.dataset.id))); }
+    function getRangeInfo(level) {
+      let range = RANGES[0];
+      for (const item of RANGES) {
+        if (level >= item.min) range = item;
+      }
+      return range;
+    }
 
-    function attemptMission(id){ const m=state.missions.find(x=>x.id===id); if(!m) return; // risk check
-      const roll = Math.random()*100; const effectiveRisk = m.risk; const success = roll >= effectiveRisk; if(success){ // success
-        state.player.xp += m.xp; state.player.gold += m.gold; m.completed = true; pushLog(`[Misión] ${m.title} completada. +${m.xp} XP, +${m.gold} Oro.`); showToast('Misión cumplida', m.title); checkLevelUp(); applyContractsOnSuccess(m); } else { // fail
-        // apply penalties if any contract accepted
-        pushLog(`[Misión] ${m.title} fallida.`); showToast('Misión fallida', `Fallaste la misión: ${m.title}`,3000); state.player.missed++; // small penalty
-        state.player.gold = Math.max(0,state.player.gold - Math.floor(m.gold/2)); }
-      save(); renderAll(); checkAchievements(); }
+    function xpRequiredForLevel(level) {
+      return Math.floor(100 * Math.pow(1.28, Math.max(0, level - 1)));
+    }
 
-    function skipMission(id){ const m=state.missions.find(x=>x.id===id); if(!m) return; // skip considered as miss with less penalty
-      state.player.missed++; state.player.gold = Math.max(0,state.player.gold - Math.floor((m.gold||10)/3)); pushLog(`[Misión] ${m.title} saltada.`); save(); renderAll(); }
+    function showToast(title, body, duration = 3500) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast rounded-xl p-3 shadow-2xl';
+      toast.innerHTML = `
+        <div class="font-semibold text-sm">${title}</div>
+        <div class="text-xs text-slate-300 mt-1">${body}</div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), duration);
+    }
 
-    function checkLevelUp(){ let req = xpReq(state.player.level); while(state.player.xp >= req){ state.player.xp -= req; state.player.level++; pushLog(`[Nivel] ¡Has subido al nivel ${state.player.level}!`); showToast('LEVEL UP', `Nivel ${state.player.level}`); applyLevelRewards(); req = xpReq(state.player.level); } }
-    function applyLevelRewards(){ // example: give points or gold
-      state.player.gold += 20; pushLog('[Sistema] Recompensa de nivel: +20 Oro'); }
+    function pushActivity(text) {
+      state.activity.unshift({ text, time: Date.now() });
+      if (state.activity.length > 20) state.activity.pop();
+      state.player.lastAction = Date.now();
+      saveState();
+      renderActivity();
+    }
 
-    function renderContracts(){ const el=document.getElementById('contracts'); el.innerHTML=state.contracts.map(c=>`<div class="item-card ${c.accepted? '' : ''}"><div class="flex justify-between"><div><div class="font-semibold">${c.title}</div><div class="text-xs text-slate-400">${c.desc}</div></div><div><button data-id="${c.id}" class="toggle-contract neon-btn px-3 py-1 rounded">${c.accepted? 'Cancelar':'Aceptar'}</button></div></div></div>`).join(''); document.querySelectorAll('.toggle-contract').forEach(b=>b.addEventListener('click',e=>toggleContract(e.target.dataset.id))); }
+    function renderPlayer() {
+      const p = state.player;
+      const req = xpRequiredForLevel(p.level);
+      const range = getRangeInfo(p.level);
+      const rangeLabel = range.label;
 
-    function toggleContract(id){ const c=state.contracts.find(x=>x.id===id); if(!c) return; c.accepted = !c.accepted; pushLog(`[Contrato] ${c.title} ${c.accepted? 'aceptado' : 'cancelado'}`); save(); renderContracts(); }
+      p.title = (p.title || '').includes('Rango') ? p.title : `${p.title || 'Cazador'} ${rangeLabel}`;
 
-    function applyContractsOnSuccess(mission){ // if any accepted contract modifies rewards
-      state.contracts.forEach(c=>{ if(c.accepted){ // apply reward multipliers or extras
-          if(c.rewardXp) { const add = Math.floor(mission.xp * (c.rewardXp)); state.player.xp += add; pushLog(`[Contrato] Bonus: +${add} XP por ${c.title}`); }
-          if(c.rewardGold) { state.player.gold += c.rewardGold; pushLog(`[Contrato] Bonus: +${c.rewardGold} Oro por ${c.title}`); }
-        } }); }
+      document.getElementById('player-name').textContent = p.name;
+      document.getElementById('player-title').textContent = `${p.title}`.includes('Rango') ? p.title : `${p.title} ${rangeLabel}`;
+      document.getElementById('player-level').textContent = p.level;
+      document.getElementById('player-gold').textContent = p.gold;
+      document.getElementById('player-missed').textContent = p.missed;
+      document.getElementById('xp-text').textContent = `${p.xp} / ${req}`;
+      document.getElementById('xp-bar').style.width = `${Math.min(100, (p.xp / req) * 100)}%`;
 
-    function applyContractsOnFail(mission){ state.contracts.forEach(c=>{ if(c.accepted){ if(c.riskGold) { state.player.gold = Math.max(0, state.player.gold - c.riskGold); pushLog(`[Contrato] Penalización: -${c.riskGold} Oro por fallo en ${c.title}`); } if(c.riskXp) { state.player.xp = Math.max(0, state.player.xp - c.riskXp); pushLog(`[Contrato] Penalización: -${c.riskXp} XP por fallo en ${c.title}`); } } }); }
+      const rangePanel = document.getElementById('range-panel');
+      rangePanel.innerHTML = `
+        <span class="range-chip">${range.label}</span>
+        <span class="text-xs text-slate-300">${range.name}</span>
+      `;
 
-    function renderShop(){ const el=document.getElementById('shop'); el.innerHTML = state.shop.map(s=>`<div class="item-card"><div class="flex justify-between"><div><div class="font-semibold">${s.name}</div><div class="text-xs text-slate-400">${s.desc}</div></div><div class="text-right"><div class="text-gold font-semibold">${s.cost} Oro</div><button data-id="${s.id}" class="buy-neon neon-btn mt-2 px-3 py-1 rounded">Comprar</button></div></div></div>`).join(''); document.querySelectorAll('.buy-neon').forEach(b=>b.addEventListener('click',e=>buyItem(e.target.dataset.id))); }
+      const storyLine = document.getElementById('story-line');
+      storyLine.textContent = state.story[range.name] || state.story.E;
 
-    function buyItem(id){ const it = state.shop.find(x=>x.id===id); if(!it) return; if(state.player.gold < it.cost){ showToast('Fondos insuficientes','No tienes suficiente oro'); return; } state.player.gold -= it.cost; if(it.apply && it.apply.xp) state.player.xp += it.apply.xp; if(it.apply && it.apply.loot) { // simulate adding random loot
-        const loot = 'Botín ' + Math.floor(Math.random()*1000); pushLog(`[Tienda] Recibiste ${loot}`); }
-      pushLog(`[Tienda] Comprado: ${it.name}`); save(); renderAll(); }
+      renderAttributes();
+      renderAchievements();
+    }
 
-    function renderAchievements(){ document.getElementById('ach-count').textContent = `${state.achievements.filter(a=>a.done).length}/${state.achievements.length}`; const el=document.getElementById('achievements'); el.innerHTML = state.achievements.map(a=>`<div class="item-card ${a.done? '': ''}"><div class="flex justify-between"><div><div class="font-medium">${a.title}</div><div class="text-xs text-slate-400">${a.desc}</div></div><div class="badge">${a.done? 'Unlocked' : 'Locked'}</div></div></div>`).join(''); }
+    function renderAttributes() {
+      const el = document.getElementById('attributes-panel');
+      const attrs = Object.keys(state.player.attributes);
+      el.innerHTML = attrs.map(attr => `
+        <div>
+          <div class="flex justify-between text-slate-300"><span>${capitalize(attr)}</span><span>${state.player.attributes[attr]}</span></div>
+          <div class="flex items-center gap-2 mt-1">
+            <button data-attr="${attr}" data-action="minus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">-</button>
+            <div class="text-[10px] text-slate-400">Puntos</div>
+            <button data-attr="${attr}" data-action="plus" class="attr-btn w-6 h-6 rounded-full border border-slate-600 text-slate-300">+</button>
+          </div>
+        </div>
+      `).join('');
 
-    function checkAchievements(){ if(!state.achievements.find(a=>a.id==='a1').done && state.missions.some(m=>m.completed)) { state.achievements.find(a=>a.id==='a1').done=true; pushLog('[Logro] Primer paso desbloqueado'); sendPrivateNotification('Logro desbloqueado','Primer paso'); } if(!state.achievements.find(a=>a.id==='a2').done){ if(state.contracts.find(c=>c.accepted && c.rewardXp>1)) { // accepted risky
-        state.achievements.find(a=>a.id==='a2').done=true; pushLog('[Logro] Riesgo calculado desbloqueado'); sendPrivateNotification('Logro','Riesgo calculado'); } } save(); renderAchievements(); }
+      const pointsRow = document.createElement('div');
+      pointsRow.className = 'pt-2 mt-2 border-t border-slate-700 text-right text-xs text-cyan-200';
+      pointsRow.textContent = `Puntos disponibles: ${state.player.points}`;
+      el.appendChild(pointsRow);
 
-    function sendPrivateNotification(title,body){ // respects permission; private means local notifications only
-      if('Notification' in window && Notification.permission==='granted'){ try{ new Notification(title,{body,tag:'sl-private'}); }catch(e){ showToast(title,body); } } else { showToast(title,body); } }
+      document.querySelectorAll('.attr-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const attr = button.dataset.attr;
+          const action = button.dataset.action;
+          if (action === 'plus' && state.player.points > 0) {
+            state.player.attributes[attr] += 1;
+            state.player.points -= 1;
+            pushActivity(`[Atributo] +1 ${attr}`);
+          }
+          if (action === 'minus' && state.player.attributes[attr] > 1) {
+            state.player.attributes[attr] -= 1;
+            state.player.points += 1;
+            pushActivity(`[Atributo] -1 ${attr}`);
+          }
+          saveState();
+          renderPlayer();
+        });
+      });
+    }
 
-    // logs
-    function renderLogs(){ const el=document.getElementById('log'); if(!state.logs.length){ el.innerHTML='<div class="text-sm text-slate-400">Sin actividad</div>'; return; } el.innerHTML = state.logs.slice(0,12).map(l=>`<div class="item-card"><div class="text-xs text-slate-400">${new Date(l.time).toLocaleString()}</div><div class="mt-1">${l.text}</div></div>`).join(''); }
+    function renderMissions() {
+      const container = document.getElementById('missions-container');
+      const missionCount = document.getElementById('mission-count');
+      missionCount.textContent = `${state.missions.length} misiones`;
 
-    // UI & events
-    document.getElementById('edit-btn').addEventListener('click',()=>{ document.getElementById('name-input').value=state.player.name; document.getElementById('title-input').value=state.player.title; document.getElementById('modal-edit').classList.remove('hidden'); });
-    document.getElementById('close-edit').addEventListener('click',()=>document.getElementById('modal-edit').classList.add('hidden'));
-    document.getElementById('cancel-edit').addEventListener('click',()=>document.getElementById('modal-edit').classList.add('hidden'));
-    document.getElementById('save-edit').addEventListener('click',()=>{ const n=document.getElementById('name-input').value.trim()||'Anónimo'; const t=document.getElementById('title-input').value.trim()||'Cazador'; state.player.name=n; state.player.title=t; save(); renderPlayer(); pushLog(`[Perfil] ${n} - ${t}`); document.getElementById('modal-edit').classList.add('hidden'); showToast('Guardado','Perfil actualizado'); });
+      container.innerHTML = state.missions.map(mission => {
+        const disabled = state.player.level < mission.minLevel;
+        return `
+          <div class="item-card mission-difficulty ${mission.difficulty} ${disabled ? 'opacity-60' : ''}">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-semibold">${mission.title}</h4>
+                  <span class="badge">${mission.difficulty}</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">${mission.description}</p>
+              </div>
+              <div class="text-right text-xs text-slate-300">
+                <div class="text-cyan-200">+${mission.xp} XP</div>
+                <div class="gold-text">+${mission.gold} Oro</div>
+                <div>Riesgo ${mission.risk}%</div>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center justify-between gap-2">
+              <div class="text-[11px] text-slate-400">Nivel requerido: ${mission.minLevel}</div>
+              <button data-mission-id="${mission.id}" class="do-mission neon-btn px-3 py-1.5 rounded-lg text-sm" ${disabled ? 'disabled' : ''}>${disabled ? 'Bloqueada' : 'Realizar'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
 
-    document.getElementById('class-select').addEventListener('change',(e)=>{ state.player.class=e.target.value; save(); renderPlayer(); pushLog('[Clase] Clase cambiada'); });
-    document.getElementById('notif-btn').addEventListener('click',async ()=>{ if(!('Notification' in window)){ showToast('No soportado','Tu navegador no soporta notificaciones'); return; } const r = await Notification.requestPermission(); if(r==='granted') showToast('Notificaciones','Activadas'); else showToast('Notificaciones','No concedidas'); });
+      document.querySelectorAll('.do-mission').forEach(button => {
+        button.addEventListener('click', () => completeMission(button.dataset.missionId));
+      });
+    }
 
-    // initial render
-    function renderAll(){ renderPlayer(); renderMissions(); renderContracts(); renderShop(); renderAchievements(); renderLogs(); }
-    renderAll();
+    function completeMission(id) {
+      const mission = state.missions.find(item => item.id === id);
+      if (!mission) return;
+      if (state.player.level < mission.minLevel) {
+        showToast('Misión bloqueada', `Necesitas nivel ${mission.minLevel}`);
+        return;
+      }
 
+      const successChance = Math.min(96, Math.max(20, 70 + (state.player.attributes.agility * 2) + (state.player.attributes.intelligence * 1.5) - mission.risk));
+      const roll = Math.random() * 100;
+
+      if (roll <= successChance) {
+        const bonusXp = Math.round(mission.xp * (state.player.attributes.luck > 0 ? 0.12 : 0));
+        const bonusGold = Math.round(mission.gold * (state.player.attributes.luck > 0 ? 0.15 : 0));
+
+        state.player.xp += mission.xp + bonusXp;
+        state.player.gold += mission.gold + bonusGold;
+        mission.completions += 1;
+
+        // achievements
+        if (mission.difficulty === 'hard' || mission.difficulty === 'extreme') {
+          const hard = state.achievements.find(a => a.id === 'hard-clear');
+          if (hard) hard.done = true;
+        }
+        const first = state.achievements.find(a => a.id === 'first-win');
+        if (first) first.done = true;
+
+        applyLevelProgression();
+        pushActivity(`[Misión] ${mission.title} completada. +${mission.xp + bonusXp} XP, +${mission.gold + bonusGold} Oro.`);
+        sendSystemNotification('[SISTEMA]: Misión Cumplida', `+${mission.xp + bonusXp} XP y +${mission.gold + bonusGold} Oro agregados.`);
+        showToast('Misión completada', `${mission.title}`);
+      } else {
+        const penaltyXp = Math.round(mission.xp * 0.2);
+        const penaltyGold = Math.round(mission.gold * 0.35);
+        state.player.xp = Math.max(0, state.player.xp - penaltyXp);
+        state.player.gold = Math.max(0, state.player.gold - penaltyGold);
+        state.player.missed += 1;
+        pushActivity(`[Misión] ${mission.title} fallida. Perdiste ${penaltyXp} XP y ${penaltyGold} Oro.`);
+        sendSystemNotification('[SISTEMA]: Misión fallida', `Perdiste ${penaltyXp} XP y ${penaltyGold} Oro.`);
+        showToast('Misión fallida', `${mission.title}`);
+      }
+
+      saveState();
+      renderPlayer();
+      renderMissions();
+      renderContracts();
+      renderAchievements();
+    }
+
+    function applyLevelProgression() {
+      let req = xpRequiredForLevel(state.player.level);
+      while (state.player.xp >= req) {
+        state.player.xp -= req;
+        state.player.level += 1;
+        state.player.points += 1;
+        pushActivity(`[Nivel] ¡Has alcanzado el nivel ${state.player.level}!`);
+        sendSystemNotification('[SISTEMA]: ¡LEVEL UP!', `Has alcanzado el Nivel ${state.player.level}. Puntos de atributo disponibles.`);
+        req = xpRequiredForLevel(state.player.level);
+      }
+
+      const range = getRangeInfo(state.player.level);
+      if (range.name === 'D') {
+        const r = state.achievements.find(a => a.id === 'rango-d');
+        if (r) r.done = true;
+      }
+    }
+
+    function renderContracts() {
+      const container = document.getElementById('contracts-container');
+      container.innerHTML = state.contracts.map(contract => `
+        <div class="item-card ${contract.accepted ? 'border-cyan-500/40' : ''}">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-semibold">${contract.title}</div>
+              <div class="text-xs text-slate-400 mt-1">${contract.description}</div>
+            </div>
+            <button data-contract-id="${contract.id}" class="toggle-contract neon-btn px-3 py-1.5 rounded-lg text-sm">${contract.accepted ? 'Cancelar' : 'Aceptar'}</button>
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.toggle-contract').forEach(button => {
+        button.addEventListener('click', () => {
+          const contract = state.contracts.find(item => item.id === button.dataset.contractId);
+          if (!contract) return;
+          contract.accepted = !contract.accepted;
+          pushActivity(`[Contrato] ${contract.title} ${contract.accepted ? 'aceptado' : 'cancelado'}.`);
+          saveState();
+          renderContracts();
+        });
+      });
+    }
+
+    function renderShop() {
+      const container = document.getElementById('shop-container');
+      container.innerHTML = state.shop.map(item => `
+        <div class="item-card">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-medium">${item.name}</div>
+              <div class="text-[10px] uppercase tracking-[0.16em] text-slate-400">${item.rarity}</div>
+              <div class="text-xs text-slate-400 mt-1">${item.desc}</div>
+            </div>
+            <div class="text-right">
+              <div class="gold-text font-semibold">${item.cost} oro</div>
+              <button data-item-id="${item.id}" class="buy-item neon-btn mt-2 px-3 py-1.5 rounded-lg text-xs">Comprar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.buy-item').forEach(button => {
+        button.addEventListener('click', () => buyShopItem(button.dataset.itemId));
+      });
+    }
+
+    function buyShopItem(itemId) {
+      const item = state.shop.find(entry => entry.id === itemId);
+      if (!item) return;
+      if (state.player.gold < item.cost) {
+        showToast('Fondos insuficientes', 'No tienes oro suficiente para esta compra.');
+        return;
+      }
+
+      state.player.gold -= item.cost;
+      if (item.type === 'xp') {
+        state.player.xp += item.amount;
+        pushActivity(`[Tienda] Comprado: ${item.name}. +${item.amount} XP.`);
+      }
+      if (item.type === 'stat') {
+        state.player.attributes[item.stat] += item.amount;
+        pushActivity(`[Tienda] Comprado: ${item.name}. +${item.amount} ${item.stat}.`);
+      }
+
+      saveState();
+      renderPlayer();
+      renderShop();
+      sendSystemNotification('[SISTEMA]: Ítem adquirido con éxito.', `${item.name} ya está en tu arsenal.`);
+      showToast('Compra exitosa', `${item.name}`);
+    }
+
+    function renderAchievements() {
+      const container = document.getElementById('achievement-container');
+      const count = document.getElementById('achievement-count');
+      const done = state.achievements.filter(a => a.done).length;
+      count.textContent = `${done} / ${state.achievements.length}`;
+
+      container.innerHTML = state.achievements.map(achievement => `
+        <div class="item-card ${achievement.done ? 'border-green-500/40 bg-green-500/5' : 'opacity-60'}">
+          <div class="flex justify-between gap-3">
+            <div>
+              <div class="font-medium">${achievement.title}</div>
+              <div class="text-[10px] text-slate-400">${achievement.description}</div>
+            </div>
+            <span class="badge">${achievement.done ? 'OK' : 'LOCK'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderActivity() {
+      const container = document.getElementById('activity-log');
+      const lastAction = document.getElementById('last-action');
+      const logs = state.activity;
+
+      if (!logs.length) {
+        lastAction.textContent = 'Última acción: nunca';
+        container.innerHTML = '<div class="text-sm text-slate-400">Sin actividad todavía.</div>';
+        return;
+      }
+
+      lastAction.textContent = `Última acción: ${new Date(logs[0].time).toLocaleString()}`;
+      container.innerHTML = logs.slice(0, 12).map(item => `
+        <div class="item-card">
+          <div class="text-[10px] uppercase tracking-[0.16em] text-slate-500">${new Date(item.time).toLocaleTimeString()}</div>
+          <div class="mt-1 text-sm">${item.text}</div>
+        </div>
+      `).join('');
+    }
+
+    function capitalize(value) {
+      return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    function updateNotificationUI() {
+      const btn = document.getElementById('notif-btn');
+      const status = document.getElementById('notif-status');
+      if (!('Notification' in window)) {
+        btn.innerHTML = '<span data-lucide="bell-off"></span> [SISTEMA: NO SOPORTADO]';
+        status.textContent = 'No soportado';
+        lucide.createIcons();
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        btn.innerHTML = '<span data-lucide="check-circle"></span> [SISTEMA: NOTIFICACIONES ACTIVAS]';
+        btn.classList.add('pulse');
+        status.textContent = 'Granted';
+      } else if (Notification.permission === 'denied') {
+        btn.innerHTML = '<span data-lucide="slash"></span> [SISTEMA: DENEGADAS]';
+        btn.classList.remove('pulse');
+        status.textContent = 'Denied';
+      } else {
+        btn.innerHTML = '<span data-lucide="bell"></span> [SISTEMA: ACTIVAR NOTIFICACIONES]';
+        btn.classList.remove('pulse');
+        status.textContent = 'Default';
+      }
+      lucide.createIcons();
+    }
+
+    function sendSystemNotification(title, body) {
+      if (!('Notification' in window)) {
+        showToast(title, body);
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        try {
+          const n = new Notification(title, { body, tag: 'solo-leveling-tracker' });
+          setTimeout(() => n.close(), 4000);
+        } catch (err) {
+          showToast(title, body);
+        }
+      } else {
+        showToast(title, body);
+      }
+    }
+
+    document.getElementById('edit-player-btn').addEventListener('click', () => {
+      document.getElementById('edit-name').value = state.player.name;
+      document.getElementById('edit-title').value = state.player.title;
+      document.getElementById('edit-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('close-edit-modal').addEventListener('click', () => document.getElementById('edit-modal').classList.add('hidden'));
+    document.getElementById('cancel-edit').addEventListener('click', () => document.getElementById('edit-modal').classList.add('hidden'));
+    document.getElementById('save-edit').addEventListener('click', () => {
+      const name = document.getElementById('edit-name').value.trim() || 'Anónimo';
+      const title = document.getElementById('edit-title').value.trim() || 'Cazador';
+      state.player.name = name;
+      state.player.title = title;
+      saveState();
+      renderPlayer();
+      pushActivity(`[Perfil] ${name} actualizado.`);
+      document.getElementById('edit-modal').classList.add('hidden');
+      showToast('Guardado', 'Nombre y título actualizados.');
+    });
+
+    document.getElementById('notif-btn').addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        showToast('Notificaciones', 'Tu navegador no soporta Web Notifications.');
+        return;
+      }
+      const result = await Notification.requestPermission();
+      state.settings.notificationsEnabled = result === 'granted';
+      saveState();
+      updateNotificationUI();
+      if (result === 'granted') {
+        sendSystemNotification('[SISTEMA]: Notificaciones activadas', 'Recibirás recordatorios privados del sistema.');
+        pushActivity('[Sistema] Permiso de notificaciones concedido.');
+      }
+    });
+
+    function renderEverything() {
+      renderPlayer();
+      renderMissions();
+      renderContracts();
+      renderShop();
+      renderAchievements();
+      renderActivity();
+      updateNotificationUI();
+      lucide.createIcons();
+    }
+
+    // bootstrap
+    renderEverything();
+    pushActivity('[Sistema] El cazador ha comenzado su ruta.');
   </script>
 </body>
 </html>
